@@ -1,0 +1,13 @@
+prune tests
+prune docs
+
+include LICENSE.rst
+
+exclude .editorconfig
+exclude .readthedocs.yml
+exclude CHANGELOG.rst
+exclude CODE_OF_CONDUCT.rst
+exclude CONTRIBUTING.rst
+exclude pre-commit-hook
+exclude requirements.txt
+exclude tox.ini

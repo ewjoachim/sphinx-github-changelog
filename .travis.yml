@@ -1,0 +1,56 @@
+# Config file for automatic testing at travis-ci.org
+os: linux
+language: python
+cache: pip
+
+env:
+  global:
+    PYTEST_ADDOPTS="--cov-append"
+
+script:
+  - tox -e $TOX_ENV
+
+install:
+  - pip install tox codecov
+  - tox --notest -e $TOX_ENV
+
+after_success:
+- codecov
+
+jobs:
+  include:
+    - stage: test
+      python: 3.7
+      env:
+        TOX_ENV: py37-tests
+
+    - stage: test
+      python: 3.8
+      env:
+        TOX_ENV: py38-tests
+
+    - stage: test
+      python: 3.6
+      env:
+        TOX_ENV: py36-tests
+
+
+    - python: 3.8
+      env:
+        TOX_ENV: docs
+
+    - stage: deploy
+      if: tag IS present
+      python: 3.8
+      before_install: true
+      script: true
+      install: true
+      after_success: true
+      deploy:
+        provider: pypi
+        on:
+          repo: peopledoc/sphinx-github-changelog
+          tags: true
+        username: __token__
+        password:
+          secure: "TODO secure pypi token"
