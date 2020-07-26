@@ -3,25 +3,6 @@ from pathlib import Path
 import pytest
 
 
-@pytest.fixture
-def github(requests_mock):
-    releases = [
-        {
-            "name": "A new hope",
-            "descriptionHTML": "<p>yay</p>",
-            "url": "https://example.com",
-            "tagName": "1.0.0",
-            "publishedAt": "2000-01-01",
-        }
-    ]
-    gh = requests_mock.post(
-        "https://api.github.com/graphql",
-        request_headers={"Authorization": "token token"},
-        json={"data": {"repository": {"releases": {"nodes": releases}}}},
-    )
-    return gh
-
-
 @pytest.mark.sphinx(buildername="html", testroot="all")
 def test_build(app, github):
     app.builder.build_all()
@@ -34,3 +15,13 @@ def test_build(app, github):
     query = github.request_history[0].json()["query"]
     assert query.lstrip().startswith("query {")
     assert expected in received
+
+
+@pytest.mark.sphinx(buildername="html", testroot="error")
+def test_error(app, status, warning):
+    app.builder.build_all()
+    assert (
+        "Changelog needs a Github releases URL "
+        "(https://github.com/:owner/:repo/releases). "
+        "Received https://wrong-url.com/" in warning.getvalue()
+    )

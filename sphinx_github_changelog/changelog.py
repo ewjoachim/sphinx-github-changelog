@@ -34,24 +34,20 @@ class ChangelogDirective(Directive):
             raise self.error(str(exc))
 
 
-def compute_changelog(token: Optional[str], options: Dict[str, str]):
+def compute_changelog(
+    token: Optional[str], options: Dict[str, str]
+) -> Iterable[nodes.Node]:
     if not token:
         return no_token(changelog_url=options["changelog-url"])
 
     owner_repo = extract_github_repo_name(url=options["github"])
     releases = extract_releases(owner_repo=owner_repo, token=token)
 
-    pypi_name: Optional[str]
-    try:
-        pypi_name = extract_pypi_package_name(url=options["pypi"])
-    except KeyError:
-        pypi_name = None
+    pypi_name = extract_pypi_package_name(url=options.get("pypi"))
 
     result_nodes: List[nodes.Node] = []
     for release in releases:
-        result_nodes.extend(
-            list(nodes_for_release(release=release, pypi_name=pypi_name))
-        )
+        result_nodes.append(nodes_for_release(release=release, pypi_name=pypi_name))
 
     return result_nodes
 
@@ -86,7 +82,9 @@ def extract_github_repo_name(url: str) -> str:
     return stripped_url[len(prefix) : -len(postfix)]
 
 
-def extract_pypi_package_name(url: str) -> str:
+def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
+    if not url:
+        return None
     stripped_url = url.rstrip("/")
     prefix = "https://pypi.org/project/"
     url_is_correct = stripped_url.startswith(prefix)
@@ -130,7 +128,7 @@ def nodes_for_release(
 
     # Body
     section += nodes.raw(text=release["descriptionHTML"], format="html")
-    yield section
+    return section
 
 
 def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
