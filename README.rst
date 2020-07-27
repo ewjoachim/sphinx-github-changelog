@@ -9,16 +9,16 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :target: http://sphinx-github-changelog.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://travis-ci.org/peopledoc/sphinx-github-changelog.svg?branch=master
+.. image:: https://travis-ci.org/peopledoc/sphinx-github-changelog.svg?branch=main
     :target: https://travis-ci.org/peopledoc/sphinx-github-changelog
     :alt: Continuous Integration Status
 
-.. image:: https://codecov.io/gh/peopledoc/sphinx-github-changelog/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/peopledoc/sphinx-github-changelog/branch/main/graph/badge.svg
     :target: https://codecov.io/gh/peopledoc/sphinx-github-changelog
     :alt: Coverage Status
 
 .. image:: https://img.shields.io/badge/License-MIT-green.svg
-    :target: https://github.com/peopledoc/sphinx-github-changelog/blob/master/LICENSE
+    :target: https://github.com/peopledoc/sphinx-github-changelog/blob/main/LICENSE
     :alt: MIT License
 
 .. image:: https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg
