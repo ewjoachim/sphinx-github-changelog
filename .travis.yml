@@ -53,4 +53,4 @@ jobs:
           tags: true
         username: __token__
         password:
-          secure: "TODO secure pypi token"
+          secure: "UrFMQh8BTWiypZCRbVIAOUqoCvRynh7a1ebR/k1wE+nNp9U0RelTabdoVd6jF0BypUHGfpwRJV+3+kXkUm7xi0W24kz1S8HkkSbcU50q6zhostMmMaBYwiCYyop0LIPWZPkrfl2xJWDPJKBgZpAr9Oce+oFnvgseW3f8Z1jKlqvLl9k5zMAgdTBjKm7F5ToRoY0udV6NcRNfXoaf50DcIazycN68+17qmuOwnAIx3zBwoxn7WefHFwTmQEad1jIrQhy4+ZmvQLqnJPeRBGeqxMKXRcx/YhybV30f2eEMgQGRgXWg2aDbOeUURrFbrhKAbuULaC4pmx9ExpnyRmf8i+B1q7VLfFRfOWBH6uSlgVEJ5zpGtQUf6M666B8RxuKSDPhB+ozu4PvNRHgTQhTofOITm3SrHzaouv+vvRLMSh8AScQAJ2q1W8n+KTzciRlV/q+RRPUPoIEtjnr+FegiGng3eIfseeYXdX1tJbIlXv60ydagJtFvQGPhqQLwPNAs8NiBgXT4Olch0f9/DY3LgkIS6RnXZolq/GrlsUQI22UwpVcTCmHMrP5R1AO3ElO19bx/Qrrp4bPFyIXg17PhS17BKDZZa28HZ/lbk3ckMXp+wJZoywGot7Xv3R//Zw8b8u7MG1D7Av7iX46Z5nPctmyFsykafkqR4s/V5SSY22Q="
