@@ -51,14 +51,14 @@ In your documentation:
 .. code-block:: restructuredtext
 
     .. changelog::
-        :changelog-url: https://your-project.readthedocs.io/en/stable/changelog.html
+        :changelog-url: https://your-project.readthedocs.io/en/stable/#changelog
         :github: https://github.com/you/your-project/releases/
         :pypi: https://pypi.org/project/your-project/
 
 
 See the end result for this project on ReadTheDocs__.
 
-.. __: https://sphinx-github-changelog.readthedocs.io/en/stable/changelog.html
+.. __: https://sphinx-github-changelog.readthedocs.io/en/stable/#changelog
 
 Why ?
 =====
