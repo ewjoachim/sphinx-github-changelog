@@ -164,33 +164,75 @@ def test_nodes_for_release_title_pypy(release_dict):
     )
 
 
-def test_extract_releases(github):
+def test_nodes_for_release_draft(release_dict):
+    release_dict["isDraft"] = True
+    assert changelog.nodes_for_release(release=release_dict, pypi_name="foo") == []
+
+
+def test_extract_releases(github_payload, release_dict, mocker):
+    mocker.patch(
+        "sphinx_github_changelog.changelog.github_call", return_value=github_payload
+    )
     assert changelog.extract_releases(owner_repo="a/b", token="token") == [
-        {
-            "descriptionHTML": "<p>yay</p>",
-            "name": "A new hope",
-            "publishedAt": "2000-01-01",
-            "tagName": "1.0.0",
-            "url": "https://example.com",
-        },
+        release_dict,
     ]
 
 
-def test_extract_releases_http_error(requests_mock):
-    requests_mock.post(
-        "https://api.github.com/graphql", status_code=400, json={"message": "foo"}
+def test_extract_releases_remove_none(github_payload, release_dict, mocker):
+    mocker.patch(
+        "sphinx_github_changelog.changelog.github_call",
+        return_value={
+            "data": {"repository": {"releases": {"nodes": [None, 1, None, 2]}}}
+        },
+    )
+    assert changelog.extract_releases(owner_repo="a/b", token="token") == [1, 2]
+
+
+def test_extract_releases_errors(github_payload, release_dict, mocker):
+    mocker.patch(
+        "sphinx_github_changelog.changelog.github_call",
+        return_value={"errors": [{"message": "c"}, {"message": "d"}]},
     )
     with pytest.raises(changelog.ChangelogError) as exc_info:
-        assert changelog.extract_releases(owner_repo="a/b", token="token")
+        changelog.extract_releases(owner_repo="a/b", token="token")
 
-    assert str(exc_info.value) == "Could not retrieve changelog from github: foo"
+    assert str(exc_info.value) == "GitHub API error response: \nc\nd"
 
 
-def test_extract_releases_http_error_connection(requests_mock):
-    requests_mock.post(
-        "https://api.github.com/graphql", exc=requests.ConnectionError("bar")
+def test_extract_releases_format(github_payload, release_dict, mocker):
+    mocker.patch(
+        "sphinx_github_changelog.changelog.github_call",
+        return_value={"data": {"repository": None}},
     )
     with pytest.raises(changelog.ChangelogError) as exc_info:
-        assert changelog.extract_releases(owner_repo="a/b", token="token")
+        changelog.extract_releases(owner_repo="a/b", token="token")
+
+    error = "GitHub API error unexpected format:\n{'data': {'repository': None}}"
+    assert str(exc_info.value) == error
+
+
+def test_github_call(requests_mock):
+    url = "https://api.github.com/graphql"
+    payload = {"message": "foo"}
+    requests_mock.post(url, json=payload)
+    assert changelog.github_call(url=url, token="token", query="") == payload
+
+
+def test_github_call_http_error(requests_mock):
+    url = "https://api.github.com/graphql"
+    requests_mock.post(url, status_code=400, json={"message": "foo"})
+    with pytest.raises(changelog.ChangelogError) as exc_info:
+        changelog.github_call(url=url, token="token", query="")
+
+    assert str(exc_info.value) == (
+        "Unexpected GitHub API error status code: 400\n" """{"message": "foo"}"""
+    )
+
+
+def test_github_call_http_error_connection(requests_mock):
+    url = "https://api.github.com/graphql"
+    requests_mock.post(url, exc=requests.ConnectionError("bar"))
+    with pytest.raises(changelog.ChangelogError) as exc_info:
+        changelog.github_call(url=url, token="token", query="")
 
     assert str(exc_info.value) == "Could not retrieve changelog from github: bar"
