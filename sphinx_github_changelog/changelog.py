@@ -100,6 +100,8 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
 def nodes_for_release(
     release: Dict[str, Any], pypi_name: Optional[str] = None
 ) -> Iterable[nodes.Node]:
+    if release["isDraft"]:
+        return []  # For now, draft releases are excluded
 
     tag = release["tagName"]
     title = release["name"]
@@ -142,7 +144,7 @@ def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
         repository(owner: "%(owner)s", name: "%(repo)s") {
             releases(orderBy: {field: CREATED_AT, direction: DESC}, first:100) {
                 nodes {
-                    name, descriptionHTML, url, tagName, publishedAt
+                    name, descriptionHTML, url, tagName, publishedAt, isDraft
                 }
             }
         }

@@ -164,15 +164,14 @@ def test_nodes_for_release_title_pypy(release_dict):
     )
 
 
-def test_extract_releases(github):
+def test_nodes_for_release_draft(release_dict):
+    release_dict["isDraft"] = True
+    assert changelog.nodes_for_release(release=release_dict, pypi_name="foo") == []
+
+
+def test_extract_releases(github, release_dict):
     assert changelog.extract_releases(owner_repo="a/b", token="token") == [
-        {
-            "descriptionHTML": "<p>yay</p>",
-            "name": "A new hope",
-            "publishedAt": "2000-01-01",
-            "tagName": "1.0.0",
-            "url": "https://example.com",
-        },
+        release_dict,
     ]
 
 

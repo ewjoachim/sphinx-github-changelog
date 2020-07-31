@@ -19,6 +19,7 @@ def release_dict():
         "url": "https://example.com",
         "tagName": "1.0.0",
         "publishedAt": "2000-01-01",
+        "isDraft": False,
     }
 
 
