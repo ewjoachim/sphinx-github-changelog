@@ -4,7 +4,8 @@ import pytest
 
 
 @pytest.mark.sphinx(buildername="html", testroot="all")
-def test_build(app, github):
+def test_build(app, requests_mock, github_payload):
+    github = requests_mock.post("https://api.github.com/graphql", json=github_payload)
     app.builder.build_all()
     with open(Path(__file__).parent / "changelog.html") as f:
         expected = f.read()

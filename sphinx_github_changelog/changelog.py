@@ -134,10 +134,8 @@ def nodes_for_release(
 
 
 def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
-    session = requests.Session()
 
     # Necessary for GraphQL
-    session.headers["Authorization"] = f"token {token}"
     owner, repo = owner_repo.split("/")
     query = """
     query {
@@ -153,18 +151,39 @@ def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
         "owner": owner,
         "repo": repo,
     }
-    query = query.replace("\n", "")
+    full_query = {"query": query.replace("\n", "")}
 
     url = "https://api.github.com/graphql"
 
     try:
-        response = session.post(url, json={"query": query})
+        result = github_call(url=url, query=full_query, token=token)
+        if "errors" in result:
+            raise ChangelogError(
+                "GitHub API error response: \n"
+                + "\n".join(e.get("message", str(e)) for e in result["errors"])
+            )
+
+        releases = result["data"]["repository"]["releases"]["nodes"]
+        # If you don't have the right to see draft releases, they're "None"
+        return [r for r in releases if r]
+    except (KeyError, TypeError):
+        raise ChangelogError(f"GitHub API error unexpected format:\n{result!r}")
+
+
+def github_call(url, token, query):
+    try:
+        response = requests.post(
+            url, json=query, headers={"Authorization": f"token {token}"}
+        )
         response.raise_for_status()
-        return response.json()["data"]["repository"]["releases"]["nodes"]
+        # Let's not imagine if GitHub responds non-json...
+        return response.json()
+
     except requests.HTTPError as exc:
-        error = response.json()
+        # GraphQL always responds 200
         raise ChangelogError(
-            "Could not retrieve changelog from github: " + error["message"]
+            f"Unexpected GitHub API error status code: {response.status_code}\n"
+            f"{response.text}"
         ) from exc
     except requests.RequestException as exc:
         raise ChangelogError(
