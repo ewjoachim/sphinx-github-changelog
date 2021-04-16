@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, Optional
 
 import requests
 from docutils import nodes
@@ -45,11 +45,11 @@ def compute_changelog(
 
     pypi_name = extract_pypi_package_name(url=options.get("pypi"))
 
-    result_nodes: List[nodes.Node] = []
-    for release in releases:
-        result_nodes.append(nodes_for_release(release=release, pypi_name=pypi_name))
+    result_nodes = (
+        node_for_release(release=release, pypi_name=pypi_name) for release in releases
+    )
 
-    return result_nodes
+    return [n for n in result_nodes if n is not None]
 
 
 def no_token(changelog_url: Optional[str]) -> Iterable[nodes.Node]:
@@ -97,11 +97,11 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
     return stripped_url[len(prefix) :]  # noqa
 
 
-def nodes_for_release(
+def node_for_release(
     release: Dict[str, Any], pypi_name: Optional[str] = None
-) -> Iterable[nodes.Node]:
+) -> Optional[nodes.Node]:
     if release["isDraft"]:
-        return []  # For now, draft releases are excluded
+        return None  # For now, draft releases are excluded
 
     tag = release["tagName"]
     title = release["name"]

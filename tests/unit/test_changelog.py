@@ -128,9 +128,9 @@ def test_extract_pypi_package_name_error():
         changelog.extract_pypi_package_name("https://example.com")
 
 
-def test_nodes_for_release_no_pypi(release_dict):
+def test_node_for_release_no_pypi(release_dict):
     assert node_to_string(
-        changelog.nodes_for_release(release=release_dict, pypi_name=None)
+        changelog.node_for_release(release=release_dict, pypi_name=None)
     ) == canonicalize(
         """
         <section ids="release-1-0-0">
@@ -146,16 +146,16 @@ def test_nodes_for_release_no_pypi(release_dict):
     )
 
 
-def test_nodes_for_release_title_tag(release_dict):
+def test_node_for_release_title_tag(release_dict):
     release_dict["name"] = "Bla 1.0.0"
     assert "<title>Bla 1.0.0</title>" in node_to_string(
-        changelog.nodes_for_release(release=release_dict, pypi_name=None)
+        changelog.node_for_release(release=release_dict, pypi_name=None)
     )
 
 
-def test_nodes_for_release_title_pypy(release_dict):
+def test_node_for_release_title_pypy(release_dict):
     value = node_to_string(
-        changelog.nodes_for_release(release=release_dict, pypi_name="foo")
+        changelog.node_for_release(release=release_dict, pypi_name="foo")
     )
 
     assert (
@@ -164,9 +164,9 @@ def test_nodes_for_release_title_pypy(release_dict):
     )
 
 
-def test_nodes_for_release_draft(release_dict):
+def test_node_for_release_draft(release_dict):
     release_dict["isDraft"] = True
-    assert changelog.nodes_for_release(release=release_dict, pypi_name="foo") == []
+    assert changelog.node_for_release(release=release_dict, pypi_name="foo") is None
 
 
 def test_extract_releases(github_payload, release_dict, mocker):
