@@ -1,9 +1,9 @@
 import sys
 from typing import Mapping
 
-if sys.version_info[:2] >= (3, 8):
+if sys.version_info[:2] >= (3, 8):  # pragma: no cover
     import importlib.metadata as importlib_metadata
-else:
+else:  # pragma: no cover
     import importlib_metadata
 
 
