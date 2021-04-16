@@ -1,4 +1,4 @@
-name-template: '$RESOLVED_VERSION: Version title (TODO: set meaningful title)'
+name-template: '$RESOLVED_VERSION'
 tag-template: '$RESOLVED_VERSION'
 categories:
   - title: 'Breaking changes'
@@ -20,8 +20,6 @@ version-resolver:
 exclude-labels:
 - 'PR: Skip changelog'
 template: |
-  ### Uncategorized (TODO: please categorize)
-
   $CHANGES
 
   ### Kudos:
