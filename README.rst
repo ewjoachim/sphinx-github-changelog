@@ -13,6 +13,10 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :target: https://travis-ci.org/peopledoc/sphinx-github-changelog
     :alt: Continuous Integration Status
 
+.. image:: https://results.pre-commit.ci/badge/github/ewjoachim/sphinx-github-changelog/main.svg
+    :target: https://results.pre-commit.ci/repo/github/274927215
+    :alt: Pre-commit Status
+
 .. image:: https://codecov.io/gh/peopledoc/sphinx-github-changelog/branch/main/graph/badge.svg
     :target: https://codecov.io/gh/peopledoc/sphinx-github-changelog
     :alt: Coverage Status

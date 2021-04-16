@@ -1,112 +1,77 @@
-Contributing Guidelines
-=======================
+Contributing
+============
 
-Welcome behind the curtain of Sphinx GiHub Changelog.
+You're welcome to come and bake delicious macaroons with us :)
 
-Instructions for contribution
+This project uses Poetry_, pre-commit_ and tox_. We recommand installing those with
+pipx_.
+
+.. _Poetry: https://python-poetry.org/
+.. _pre-commit: https://pre-commit.com
+.. _pipx: https://pipxproject.github.io/pipx/installation/
+.. _tox: https://tox.readthedocs.io/en/latest/
+
+There are multiple ways of interacting with the project.
+
+I just want to run the CI checks locally
+----------------------------------------
+
+.. code-block:: console
+
+    $ tox
+
+Of course, you can launch a single environment (see ``tox.ini`` for details on each
+environment). For a full run, you'll need to have all the Python versions that this lib
+supports, installed locally (but it's ok to do a partial run, that's why the CI is for).
+
+I want to run the code quality tools
+------------------------------------
+
+Assuming you installed ``pre-commit``, use ``pre-commit run``.
+But assuming you installed ``pre-commit``, run ``pre-commit install`` and you'll have
+the linters run on commit, which is more practical.
+
+I want a venv to play locally
 -----------------------------
 
-Set up your development environment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: console
 
-Create a `virtual environment`__, and activate it.
+    $ poetry install
 
-.. __: https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
+Look at ``poetry env use python3.X`` if you want to work on a specific Python version.
 
-Install the project in development mode, with the dependencies:
+I want to run the the tests
+---------------------------
+
+The easiest way to run the tests on a single python version is:
 
 .. code-block:: console
 
-    (venv) $ pip install -r requirements.txt
+    $ poetry run pytest
 
-Run the project automated tests
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I want a quicker feedback loop
+------------------------------
 
-.. code-block:: console
-
-    (venv) $ pytest  # Test the code with the current interpreter
-
-Or
+Create a virtualenv with a version of python of your choice (or skip this step if you're
+ok working with a virtualenv built with your default ``python3``)
 
 .. code-block:: console
 
-    $ tox  # Run all the checks for all the interpreters
+    $ poetry shell
 
-If you're not familiar with Pytest_, do yourself a treat and look into this fabulous
-tool.
+From here, you can launch commands directly, such as ``pytest``
 
-.. _Pytest: https://docs.pytest.org/en/latest/
+I want to build the documentation
+---------------------------------
 
-If you don't know Tox_, have a look at their documentation, it's a very nice tool too.
-
-.. _Tox: https://tox.readthedocs.io/en/latest/
-
-To look at coverage in the browser after launching the tests, use:
-
-.. code-block:: console
-
-    $ python -m webbrowser "$(pwd)/htmlcov/index.html"
-
-Keep your code clean
-^^^^^^^^^^^^^^^^^^^^
-
-Before committing:
-
-.. code-block:: console
-
-    $ tox -e format
-
-If you've committed already, you can do a "Oops lint" commit, but the best is to run:
-
-.. code-block:: console
-
-    $ git rebase -i --exec 'tox -e format' origin/main
-
-This will run all code formatters on each commits, so that they're clean.
-If you've never done an `interactive rebase`_ before, it may seem complicated, so you
-don't have to, but... Learn it, it's really cool !
-
-.. _`interactive rebase`: https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History
-
-You can also install a ``pre-commit``
-hook which makes sure that all your commits are created clean:
-
-.. code-block:: console
-
-    cat > .git/hooks/pre-commit <<EOF
-    #!/bin/bash -e
-    exec ./pre-commit-hook
-    EOF
-    chmod +x .git/hooks/pre-commit
-
-If ``tox`` is installed inside your ``virtualenv``, you may want to activate the
-``virtualenv`` in ``.git/hooks/pre-commit``:
-
-.. code-block:: bash
-
-    #!/bin/bash -e
-    source /path/to/venv/bin/activate
-    exec ./pre-commit-hook
-
-This will keep you from creating a commit if there's a linting problem.
-
-In addition, an editorconfig_ file will help your favorite editor to respect
-this project's coding style. It is automatically used by most famous IDEs, such as
-Pycharm and VS Code.
-
-.. _editorconfig: https://editorconfig.org/
-
-Build the documentation
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Without spell checking:
+Build with:
 
 .. code-block:: console
 
     $ tox -e docs
     $ python -m webbrowser docs/_build/html/index.html
 
-Run spell checking on the documentation:
+Run spell checking on the documentation (optional):
 
 .. code-block:: console
 
@@ -119,36 +84,41 @@ always a nice thing to do. Feel free to include any spell fix in your PR, even i
 not related to your PR (but please put it in a dedicated commit).
 
 If you need to add words to the spell checking dictionary, it's in
-``docs/spelling_wordlist.txt``. Make sure the file is alphabetically sorted!
+``docs/spelling_wordlist.txt``. Make sure the file is alphabetically sorted.
 
 If Sphinx's console output is localized and you would rather have it in English,
 use the environment variable ``LC_ALL=C.utf-8`` (either exported or attached to the
-tox process)
+``tox`` process)
+
+I want to hack around
+---------------------
+
+You're invited to hack around! We have set up those tools to ease usual developpement
+but we're always doing our best so that you can remove the top layers and work
+the way you prefer. For example: you can use ``pytest`` or ``black`` as-is, without
+all the tools. It's even recommanded to remove layers when things become complicated.
+
+The base commands are in the ``scripts/`` folder. Those scripts are the lowest-level
+actions, they consider you have already figured out your virtualenv, dependencies etc.
 
 Core contributor additional documentation
 -----------------------------------------
-
-Issues
-^^^^^^
-
-Please remember to tag Issues with appropriate labels.
-
-Pull Requests
-^^^^^^^^^^^^^
-
-PR labels help ``release-drafter`` pre-fill the next release draft. They're not
-mandatory, but releasing will be easier if they're present.
 
 Release a new version
 ^^^^^^^^^^^^^^^^^^^^^
 
 There should be an active Release Draft with the changelog in GitHub releases. Make
-relevant edits to the changelog, (see ``TODO``) including listing the migrations
-for the release. Click on Release, that's it, the rest is automated.
+relevant edits to the changelog. Click on Release, that's it, the rest is automated.
 
-When creating the release, GitHub will save the release info and create a tag with
-the provided version. The new tag will be seen by Travis, which will then create a
-wheel (using the tag as version number, thanks to our ``setup.py``), and push it
-to PyPI (using the new API tokens). That tag should also trigger a ReadTheDocs
-build, which will read GitHub releases (thanks to our ``changelog`` extension)
-which will  write the changelog in the published documentation.
+When creating the release, GitHub will save the release info and create a tag with the
+provided version. The new tag will be seen by GitHub Actions, which will then create a
+wheel (using the tag as version number, thanks to our ``setup.py``), and push it to PyPI
+(using the new API tokens). That tag should also trigger a ReadTheDocs build, which will
+read GitHub releases which will write the changelog in the published documentation.
+
+.. note::
+
+    If you need to edit the name or body of a release in the GitHub UI, don't forget to
+    also rebuild the stable and latest doc on readthedocs__.
+
+.. __: https://readthedocs.org/projects/pypitokens/
