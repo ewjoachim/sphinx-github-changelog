@@ -138,19 +138,19 @@ def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
     # Necessary for GraphQL
     owner, repo = owner_repo.split("/")
     query = """
-    query {
-        repository(owner: "%(owner)s", name: "%(repo)s") {
-            releases(orderBy: {field: CREATED_AT, direction: DESC}, first:100) {
-                nodes {
+    query {{
+        repository(owner: "{owner}", name: "{repo}") {{
+            releases(orderBy: {{field: CREATED_AT, direction: DESC}}, first:100) {{
+                nodes {{
                     name, descriptionHTML, url, tagName, publishedAt, isDraft
-                }
-            }
-        }
-    }
-    """ % {
-        "owner": owner,
-        "repo": repo,
-    }
+                }}
+            }}
+        }}
+    }}
+    """.format(
+        owner=owner,
+        repo=repo,
+    )
     full_query = {"query": query.replace("\n", "")}
 
     url = "https://api.github.com/graphql"
