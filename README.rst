@@ -173,7 +173,7 @@ Check out the built version!
 ============================
 
 This Readme is also built as a Sphinx documentation, and it includes the changelog.
-Interested to see how it looks ? Check it out on `our ReadTheDocs space`_.
+Interested to see how it looks? Check it out on `our ReadTheDocs space`_.
 
 .. _`our ReadTheDocs space`: https://sphinx-github-changelog.readthedocs.io/en/stable
 
