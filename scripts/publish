@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -eu
+
+# This script is not meant to run inside poetry
+
+poetry version $(poetry run dunamai from git --pattern '(?P<base>\d+\.\d+\.\d+)')
+poetry publish --no-interaction --build --username "__token__" --password "$1"
