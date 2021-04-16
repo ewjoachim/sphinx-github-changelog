@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-set -eu
+set -eux
 
 sphinx-build -EW docs docs/_build/html "$@"

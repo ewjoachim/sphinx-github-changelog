@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -eux
 
 sphinx-build -EW -b spelling docs docs/_build/html "$@"
 # wordlist should be sorted to avoid duplicates

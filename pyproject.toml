@@ -37,6 +37,7 @@ requests-mock = "^1.8.0"
 sphinx-rtd-theme = "^0.5.2"
 tox = "^3.23.0"
 pre-commit = "^2.12.0"
+dunamai = "^1.5.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
