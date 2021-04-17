@@ -1,8 +1,7 @@
 # Main maintainers
-*                       @ewjoachim @mgu
-
+*                       @ewjoachim
 
 # Documentation
-/docs/                  @ewjoachim @mgu @corbott
-*.rst                   @ewjoachim @mgu @corbott
-*.md                    @ewjoachim @mgu @corbott
+/docs/                  @ewjoachim
+*.rst                   @ewjoachim
+*.md                    @ewjoachim

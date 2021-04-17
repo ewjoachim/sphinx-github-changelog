@@ -1,32 +1,36 @@
 Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
 ======================================================================
 
-.. image:: https://badge.fury.io/py/sphinx-github-changelog.svg
+.. image:: https://img.shields.io/pypi/v/sphinx-github-changelog?logo=pypi&logoColor=white
     :target: https://pypi.org/pypi/sphinx-github-changelog
     :alt: Deployed to PyPI
 
-.. image:: https://readthedocs.org/projects/sphinx-github-changelog/badge/?version=latest
+.. image:: https://img.shields.io/pypi/pyversions/sphinx-github-changelog?logo=pypi&logoColor=white
+    :target: https://pypi.org/pypi/sphinx-github-changelog
+    :alt: Deployed to PyPI
+
+.. image:: https://img.shields.io/github/stars/ewjoachim/sphinx-github-changelog?logo=github
+    :target: https://github.com/ewjoachim/sphinx-github-changelog/
+    :alt: GitHub Repository
+
+.. image:: https://img.shields.io/github/workflow/status/ewjoachim/sphinx-github-changelog/CI?logo=github
+    :target: https://github.com/ewjoachim/sphinx-github-changelog/actions?workflow=CI
+    :alt: Continuous Integration
+
+.. image:: https://img.shields.io/readthedocs/sphinx-github-changelog?logo=read-the-docs&logoColor=white
     :target: http://sphinx-github-changelog.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
+    :alt: Documentation
 
-.. image:: https://travis-ci.org/peopledoc/sphinx-github-changelog.svg?branch=main
-    :target: https://travis-ci.org/peopledoc/sphinx-github-changelog
-    :alt: Continuous Integration Status
+.. image:: https://img.shields.io/codecov/c/github/ewjoachim/sphinx-github-changelog?logo=codecov&logoColor=white
+    :target: https://codecov.io/gh/ewjoachim/sphinx-github-changelog
+    :alt: Coverage
 
-.. image:: https://results.pre-commit.ci/badge/github/ewjoachim/sphinx-github-changelog/main.svg
-    :target: https://results.pre-commit.ci/repo/github/274927215
-    :alt: Pre-commit Status
-
-.. image:: https://codecov.io/gh/peopledoc/sphinx-github-changelog/branch/main/graph/badge.svg
-    :target: https://codecov.io/gh/peopledoc/sphinx-github-changelog
-    :alt: Coverage Status
-
-.. image:: https://img.shields.io/badge/License-MIT-green.svg
-    :target: https://github.com/peopledoc/sphinx-github-changelog/blob/main/LICENSE
+.. image:: https://img.shields.io/github/license/ewjoachim/sphinx-github-changelog?logo=open-source-initiative&logoColor=white
+    :target: https://github.com/ewjoachim/sphinx-github-changelog/blob/master/LICENSE
     :alt: MIT License
 
 .. image:: https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg
-    :target: CODE_OF_CONDUCT.md
+    :target: https://github.com/ewjoachim/sphinx-github-changelog/blob/master/CODE_OF_CONDUCT.md
     :alt: Contributor Covenant
 
 Sphinx-github-changelog is a Sphinx_ plugin that builds a changelog section based on
