@@ -1,0 +1,7 @@
+# Sadly, these requirements need to be duplicated from pyproject.toml
+# so that readthedocs can work. This is due to an incompatibility between
+# the readthedocs build and poetry: readthedocs cannot install poetry's dev
+# dependencies.
+.
+Sphinx
+sphinx-rtd-theme
