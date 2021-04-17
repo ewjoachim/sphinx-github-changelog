@@ -14,8 +14,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - script: lint
-            python_version: 3.x
           - script: docs
             python_version: 3.x
           - python_version: 3.7
