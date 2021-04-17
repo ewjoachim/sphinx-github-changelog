@@ -5,3 +5,4 @@ set -eux
 
 poetry version $(poetry run dunamai from git --pattern '(?P<base>\d+\.\d+\.\d+)')
 poetry publish --no-interaction --build --username "__token__" --password "$1"
+git restore pyproject.toml
