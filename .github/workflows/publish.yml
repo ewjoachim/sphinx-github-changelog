@@ -15,20 +15,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Python
+      - name: Set up Python
+        id: setup-python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.x
+          python_version: ${{ matrix.python_version }}
 
-      - name: Pip cache
+      - name: Pip, Pre-commit & Poetry caches
         uses: actions/cache@v2
         with:
           path: |
-            ~/.cache/pip
-          key: publish-cache
+            ~/.cache/
+          key: ${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Install Poetry
         run: pip install poetry
+
+      - name: Install Dev dependencies
+        run: poetry install
 
       - name: Wait for tests to succeed
         uses: fountainhead/action-wait-for-check@v1.0.0
