@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set up Python
-        id: setup-python
+        id: setup_python
         uses: actions/setup-python@v2
         with:
           python_version: ${{ matrix.python_version }}
@@ -42,7 +42,7 @@ jobs:
         with:
           path: |
             ~/.cache/
-          key: ${{ steps.setup-python.output.python-version }}-${{ hashFiles('poetry.lock') }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          key: ${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Install Poetry
         run: pip install poetry
