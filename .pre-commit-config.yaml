@@ -29,7 +29,7 @@ repos:
   hooks:
   - id: mypy
     files: ^sphinx_github_changelog/
-    args: ["--ignore-missing-imports", "--scripts-are-modules"]
+    additional_dependencies: ["types-requests", "types-docutils"]
 
 - repo: https://github.com/asottile/pyupgrade
   rev: "v2.19.1"
