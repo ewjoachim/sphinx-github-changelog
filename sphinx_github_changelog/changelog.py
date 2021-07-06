@@ -1,8 +1,12 @@
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 import requests
 from docutils import nodes
-from docutils.parsers.rst import Directive, directives
+
+# types-docutils (from typeshed) is usable but incomplete.
+# docutils-stubs is more complete but
+# https://github.com/tk0miya/docutils-stubs/issues/33
+from docutils.parsers.rst import Directive, directives  # type: ignore
 
 
 class ChangelogError(Exception):
@@ -24,7 +28,7 @@ class ChangelogDirective(Directive):
     has_content = False
     add_index = False
 
-    def run(self) -> Iterable[nodes.Node]:
+    def run(self) -> List[nodes.Node]:
         config = self.state.document.settings.env.config
         try:
             return compute_changelog(
@@ -36,7 +40,7 @@ class ChangelogDirective(Directive):
 
 def compute_changelog(
     token: Optional[str], options: Dict[str, str]
-) -> Iterable[nodes.Node]:
+) -> List[nodes.Node]:
     if not token:
         return no_token(changelog_url=options["changelog-url"])
 
@@ -52,7 +56,7 @@ def compute_changelog(
     return [n for n in result_nodes if n is not None]
 
 
-def no_token(changelog_url: Optional[str]) -> Iterable[nodes.Node]:
+def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     par = nodes.paragraph()
     par += nodes.Text("Changelog was not built because ")
     par += nodes.literal("", "sphinx_github_changelog_token")
