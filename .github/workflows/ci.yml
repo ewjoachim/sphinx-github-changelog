@@ -52,7 +52,7 @@ jobs:
           PYTEST_ADDOPTS: "--cov-report=xml"
 
       - name: Display coverage
-        uses: ewjoachim/coverage-comment-action@v1.0.1
+        uses: ewjoachim/coverage-comment-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
