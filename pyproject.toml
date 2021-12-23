@@ -20,8 +20,8 @@ documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 docutils = "^0.16"
 importlib-metadata = {version = "^3.10.1", python = "<3.8"}
 python = "^3.7"
-requests = "^2.25.1"
-Sphinx = "^3.5.4 || ^4.0.0"
+requests = "*"
+Sphinx = "*"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
