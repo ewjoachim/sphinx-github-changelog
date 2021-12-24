@@ -51,11 +51,6 @@ jobs:
         env:
           PYTEST_ADDOPTS: "--cov-report=xml"
 
-      - name: Display coverage
-        uses: ewjoachim/coverage-comment-action@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   report-status:
     name: success
     runs-on: ubuntu-latest
