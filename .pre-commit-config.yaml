@@ -37,6 +37,6 @@ repos:
   - id: pyupgrade
 
 - repo: https://github.com/PyCQA/doc8
-  rev: "0.11.1"
+  rev: "0.11.2"
   hooks:
   - id: doc8
