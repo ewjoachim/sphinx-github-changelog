@@ -42,7 +42,9 @@ a repository's `GitHub Releases`_ content.
 How ? (the short version)
 =========================
 
-In your Sphinx documentation ``conf.py``::
+In your Sphinx documentation ``conf.py``:
+
+.. code-block:: python
 
     extensions = [
         ...,  # your other extensions
