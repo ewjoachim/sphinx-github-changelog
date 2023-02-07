@@ -32,7 +32,6 @@ def node_to_string(node):
 
 
 def canonicalize(value):
-
     if not value.strip():
         return ""
     value = value.replace(r"""<raw format="html" xml:space="preserve">""", "")

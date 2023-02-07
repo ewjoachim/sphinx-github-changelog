@@ -14,7 +14,6 @@ class ChangelogError(Exception):
 
 
 class ChangelogDirective(Directive):
-
     # defines the parameter the directive expects
     # directives.unchanged means you get the raw value from RST
     required_arguments = 0
@@ -138,7 +137,6 @@ def node_for_release(
 
 
 def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
-
     # Necessary for GraphQL
     owner, repo = owner_repo.split("/")
     query = """
