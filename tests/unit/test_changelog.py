@@ -111,7 +111,9 @@ def test_extract_github_repo_name(url):
 
 
 def test_extract_github_repo_name_error():
-    with pytest.raises(changelog.ChangelogError):
+    with pytest.raises(
+        changelog.ChangelogError, match="^Changelog needs a Github releases URL"
+    ):
         changelog.extract_github_repo_name("https://example.com")
 
 
@@ -123,7 +125,9 @@ def test_extract_pypi_package_name(url):
 
 
 def test_extract_pypi_package_name_error():
-    with pytest.raises(changelog.ChangelogError):
+    with pytest.raises(
+        changelog.ChangelogError, match="^Changelog needs a PyPI project URL"
+    ):
         changelog.extract_pypi_package_name("https://example.com")
 
 
