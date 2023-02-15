@@ -93,8 +93,8 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
     url_is_correct = stripped_url.startswith(prefix)
     if not url_is_correct:
         raise ChangelogError(
-            "Changelog needs a Github releases URL "
-            f"(https://github.com/:owner/:repo/releases). Received {url}"
+            "Changelog needs a PyPI package URL "
+            f"(https://pypi.org/project/:package). Received {url}"
         )
 
     return stripped_url[len(prefix) :]  # noqa
