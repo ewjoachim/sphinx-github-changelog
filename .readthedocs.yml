@@ -9,5 +9,7 @@ sphinx:
   fail_on_warning: true
 
 python:
+  tools:
+    python: "3.10"
   install:
     - requirements: docs/requirements.txt
