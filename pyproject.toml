@@ -17,9 +17,8 @@ repository = "https://github.com/ewjoachim/sphinx-github-changelog"
 documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 docutils = "*"
-importlib-metadata = {version = "*", python = "<3.8"}
 requests = "*"
 Sphinx = "*"
 
@@ -35,7 +34,6 @@ pytest-cov = "*"
 pytest-mock = "*"
 requests-mock = "*"
 sphinx-rtd-theme = "*"
-tox = "*"
 pre-commit = "*"
 dunamai = "*"
 types-requests = "*"
