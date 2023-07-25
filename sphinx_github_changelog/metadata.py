@@ -1,10 +1,5 @@
-import sys
+import importlib.metadata as importlib_metadata
 from typing import Mapping
-
-if sys.version_info[:2] >= (3, 8):  # pragma: no cover
-    import importlib.metadata as importlib_metadata
-else:  # pragma: no cover
-    import importlib_metadata
 
 
 def extract_metadata() -> Mapping[str, str]:

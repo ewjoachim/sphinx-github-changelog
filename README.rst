@@ -143,12 +143,12 @@ Extension options (``conf.py``)
 -------------------------------
 
 - ``sphinx_github_changelog_token``: GitHub API token.
-  If the repository is public, the token doesn't need any special access (you can uncheck
-  eveything). If the repository is private, you'll need to give your token enough access
-  to read the releases.
-  Defaults to the value of the environment variable ``SPHINX_GITHUB_CHANGELOG_TOKEN``.
-  If no value is provided, the build will still pass but the changelog will not be
-  built, and a link to the ``changelog-url`` will be displayed (if provided).
+  If the repository is public, the token doesn't need any special access (you
+  can uncheck eveything). If the repository is private, you'll need to give
+  your token enough access to read the releases. Defaults to the value of the
+  environment variable ``SPHINX_GITHUB_CHANGELOG_TOKEN``. If no value is
+  provided, the build will still pass but the changelog will not be built, and
+  a link to the ``changelog-url`` will be displayed (if provided).
 
 .. _ReadTheDocs: https://readthedocs.org/
 

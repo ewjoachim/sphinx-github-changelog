@@ -4,21 +4,22 @@ on:
   pull_request:
   push:
     branches:
-      - 'main'
+      - "main"
     tags:
-      - '*'
+      - "*"
 
 jobs:
   build:
-
     strategy:
       matrix:
         include:
-          - python_version: 3.7
+          - python_version: "3.8"
             script: tests
-          - python_version: 3.8
+          - python_version: "3.9"
             script: tests
-          - python_version: 3.9
+          - python_version: "3.10"
+            script: tests
+          - python_version: "3.11"
             script: tests
 
     name: "py${{ matrix.python_version }} / ${{ matrix.script }}"
