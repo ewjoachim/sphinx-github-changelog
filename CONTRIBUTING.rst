@@ -3,26 +3,14 @@ Contributing
 
 You're welcome to come and bake delicious macaroons with us :)
 
-This project uses Poetry_, pre-commit_ and tox_. We recommand installing those with
+This project uses Poetry_ and pre-commit_. We recommand installing those with
 pipx_.
 
 .. _Poetry: https://python-poetry.org/
 .. _pre-commit: https://pre-commit.com
 .. _pipx: https://pipxproject.github.io/pipx/installation/
-.. _tox: https://tox.readthedocs.io/en/latest/
 
 There are multiple ways of interacting with the project.
-
-I just want to run the CI checks locally
-----------------------------------------
-
-.. code-block:: console
-
-    $ tox
-
-Of course, you can launch a single environment (see ``tox.ini`` for details on each
-environment). For a full run, you'll need to have all the Python versions that this lib
-supports, installed locally (but it's ok to do a partial run, that's why the CI is for).
 
 I want to run the code quality tools
 ------------------------------------
@@ -68,7 +56,7 @@ Build with:
 
 .. code-block:: console
 
-    $ tox -e docs
+    $ scripts/docs
     $ python -m webbrowser docs/_build/html/index.html
 
 Run spell checking on the documentation (optional):
@@ -76,7 +64,7 @@ Run spell checking on the documentation (optional):
 .. code-block:: console
 
     $ sudo apt install enchant
-    $ tox -e docs-spelling
+    $ scripts/docs-spelling
 
 Because of outdated software and version incompatibilities, spell checking is not
 checked in the CI, and we don't require people to run it in their PR. Though, it's
@@ -87,8 +75,7 @@ If you need to add words to the spell checking dictionary, it's in
 ``docs/spelling_wordlist.txt``. Make sure the file is alphabetically sorted.
 
 If Sphinx's console output is localized and you would rather have it in English,
-use the environment variable ``LC_ALL=C.utf-8`` (either exported or attached to the
-``tox`` process)
+use the environment variable ``LC_ALL=C.utf-8``.
 
 I want to hack around
 ---------------------
