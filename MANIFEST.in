@@ -10,4 +10,3 @@ exclude CODE_OF_CONDUCT.rst
 exclude CONTRIBUTING.rst
 exclude pre-commit-hook
 exclude requirements.txt
-exclude tox.ini
