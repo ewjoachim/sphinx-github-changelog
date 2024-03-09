@@ -13,7 +13,7 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :target: https://github.com/ewjoachim/sphinx-github-changelog/
     :alt: GitHub Repository
 
-.. image:: https://img.shields.io/github/workflow/status/ewjoachim/sphinx-github-changelog/CI?logo=github
+.. image:: https://img.shields.io/github/actions/workflow/status/ewjoachim/sphinx-github-changelog/ci.yml?logo=github&branch=main
     :target: https://github.com/ewjoachim/sphinx-github-changelog/actions?workflow=CI
     :alt: Continuous Integration
 
