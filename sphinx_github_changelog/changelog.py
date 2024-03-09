@@ -60,7 +60,7 @@ def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     par += nodes.Text("Changelog was not built because ")
     par += nodes.literal("", "sphinx_github_changelog_token")
     par += nodes.Text(" parameter is missing in the documentation configuration.")
-    result = [nodes.warning("", par)]
+    result: List[nodes.Node] = [nodes.warning("", par)]
 
     if changelog_url:
         par2 = nodes.paragraph()
@@ -99,10 +99,12 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
 
     return stripped_url[len(prefix) :]  # noqa
 
+
 def get_release_title(title: Optional[str], tag: str):
     if not title:
         return tag
     return title if tag in title else f"{tag}: {title}"
+
 
 def node_for_release(
     release: Dict[str, Any], pypi_name: Optional[str] = None

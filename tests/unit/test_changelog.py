@@ -147,8 +147,8 @@ def test_node_for_release_title_tag(release_dict):
         changelog.node_for_release(release=release_dict, pypi_name=None)
     )
 
-def test_node_for_release_none_title(release_dict):
 
+def test_node_for_release_none_title(release_dict):
     release_dict["name"] = None
     assert "<title>1.0.0</title>" in node_to_string(
         changelog.node_for_release(release=release_dict, pypi_name=None)
@@ -238,6 +238,7 @@ def test_github_call_http_error_connection(requests_mock):
         changelog.github_call(url=url, token="token", query="")
 
     assert str(exc_info.value) == "Could not retrieve changelog from github: bar"
+
 
 @pytest.mark.parametrize(
     "title, tag, expected",
