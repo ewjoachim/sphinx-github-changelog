@@ -41,7 +41,7 @@ def compute_changelog(
     token: Optional[str], options: Dict[str, str]
 ) -> List[nodes.Node]:
     if not token:
-        return no_token(changelog_url=options["changelog-url"])
+        return no_token(changelog_url=options.get("changelog-url"))
 
     owner_repo = extract_github_repo_name(url=options["github"])
     releases = extract_releases(owner_repo=owner_repo, token=token)
@@ -60,7 +60,7 @@ def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     par += nodes.Text("Changelog was not built because ")
     par += nodes.literal("", "sphinx_github_changelog_token")
     par += nodes.Text(" parameter is missing in the documentation configuration.")
-    result = [nodes.warning("", par)]
+    result: List[nodes.Node] = [nodes.warning("", par)]
 
     if changelog_url:
         par2 = nodes.paragraph()
@@ -100,6 +100,12 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
     return stripped_url[len(prefix) :]  # noqa
 
 
+def get_release_title(title: Optional[str], tag: str):
+    if not title:
+        return tag
+    return title if tag in title else f"{tag}: {title}"
+
+
 def node_for_release(
     release: Dict[str, Any], pypi_name: Optional[str] = None
 ) -> Optional[nodes.Node]:
@@ -109,7 +115,7 @@ def node_for_release(
     tag = release["tagName"]
     title = release["name"]
     date = release["publishedAt"][:10]
-    title = title if tag in title else f"{tag}: {title}"
+    title = get_release_title(title=title, tag=tag)
 
     # Section
     id_section = nodes.make_id("release-" + tag)
