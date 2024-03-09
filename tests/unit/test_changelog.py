@@ -15,14 +15,6 @@ def extract_releases(mocker, release_dict):
     )
 
 
-@pytest.fixture
-def options():
-    def _(kwargs):
-        return {"changelog-url": None, "github": None, "pypi": None, **kwargs}
-
-    return _
-
-
 def node_to_string(node):
     if isinstance(node, list):
         return canonicalize(
@@ -49,16 +41,16 @@ def canonicalize(value):
     )
 
 
-def test_compute_changelog_no_token(options):
-    nodes = changelog.compute_changelog(token=None, options=options({}))
+def test_compute_changelog_no_token():
+    nodes = changelog.compute_changelog(token=None, options={})
     assert len(nodes) == 1
 
     assert "Changelog was not built" in node_to_string(nodes[0])
 
 
-def test_compute_changelog_token(options, extract_releases):
+def test_compute_changelog_token(extract_releases):
     nodes = changelog.compute_changelog(
-        token="token", options=options({"github": "https://github.com/a/b/releases"})
+        token="token", options={"github": "https://github.com/a/b/releases"}
     )
     assert "1.0.0: A new hope" in node_to_string(nodes[0])
 

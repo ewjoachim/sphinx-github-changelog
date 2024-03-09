@@ -41,7 +41,7 @@ def compute_changelog(
     token: Optional[str], options: Dict[str, str]
 ) -> List[nodes.Node]:
     if not token:
-        return no_token(changelog_url=options["changelog-url"])
+        return no_token(changelog_url=options.get("changelog-url"))
 
     owner_repo = extract_github_repo_name(url=options["github"])
     releases = extract_releases(owner_repo=owner_repo, token=token)
