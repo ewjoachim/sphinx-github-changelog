@@ -99,6 +99,10 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
 
     return stripped_url[len(prefix) :]  # noqa
 
+def get_release_title(title: Optional[str], tag: str):
+    if not title:
+        return tag
+    return title if tag in title else f"{tag}: {title}"
 
 def node_for_release(
     release: Dict[str, Any], pypi_name: Optional[str] = None
@@ -109,7 +113,7 @@ def node_for_release(
     tag = release["tagName"]
     title = release["name"]
     date = release["publishedAt"][:10]
-    title = title if tag in title else f"{tag}: {title}"
+    title = get_release_title(title=title, tag=tag)
 
     # Section
     id_section = nodes.make_id("release-" + tag)
