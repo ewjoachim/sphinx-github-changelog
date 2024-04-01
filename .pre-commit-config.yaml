@@ -24,19 +24,19 @@ repos:
   - id: isort
 
 - repo: https://github.com/PyCQA/flake8
-  rev: "6.1.0"
+  rev: "7.0.0"
   hooks:
   - id: flake8
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: "v1.4.1"
+  rev: "v1.9.0"
   hooks:
   - id: mypy
     files: ^sphinx_github_changelog/
     additional_dependencies: ["types-requests", "types-docutils"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: "v3.15.0"
+  rev: "v3.15.2"
   hooks:
   - id: pyupgrade
 
