@@ -9,9 +9,9 @@ sphinx:
   fail_on_warning: true
 
 build:
-  os: ubuntu-20.04
+  os: ubuntu-lts-latest
   tools:
-    python: "3.10"
+    python: "3"
   jobs:
     post_create_environment:
       - pip install poetry
