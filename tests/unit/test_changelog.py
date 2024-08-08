@@ -110,6 +110,27 @@ def test_extract_github_repo_name_error():
 
 
 @pytest.mark.parametrize(
+    "url",
+    [
+        "https://git.privaterepo.com/a/b/releases",
+        "https://git.privaterepo.com/a/b/releases/",
+    ],
+)
+def test_extract_github_repo_different_root_url(url):
+    with pytest.raises(
+        changelog.ChangelogError, match="^Changelog needs a Github releases URL"
+    ):
+        changelog.extract_github_repo_name(url)
+
+    assert (
+        changelog.extract_github_repo_name(url, "https://git.privaterepo.com/") == "a/b"
+    )
+    assert (
+        changelog.extract_github_repo_name(url, "https://git.privaterepo.com") == "a/b"
+    )
+
+
+@pytest.mark.parametrize(
     "url", ["https://pypi.org/project/a", "https://pypi.org/project/a/"]
 )
 def test_extract_pypi_package_name(url):
@@ -176,6 +197,19 @@ def test_extract_releases(github_payload, release_dict, mocker):
         "sphinx_github_changelog.changelog.github_call", return_value=github_payload
     )
     assert changelog.extract_releases(owner_repo="a/b", token="token") == [
+        release_dict,
+    ]
+
+
+def test_extract_releases_custom_graphql_url(github_payload, release_dict, mocker):
+    mocker.patch(
+        "sphinx_github_changelog.changelog.github_call", return_value=github_payload
+    )
+    assert changelog.extract_releases(
+        owner_repo="a/b",
+        token="token",
+        graphql_url="https://git.privaterepo.com/graphql",
+    ) == [
         release_dict,
     ]
 

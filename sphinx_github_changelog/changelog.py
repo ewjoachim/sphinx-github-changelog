@@ -31,20 +31,28 @@ class ChangelogDirective(Directive):
         config = self.state.document.settings.env.config
         try:
             return compute_changelog(
-                token=config.sphinx_github_changelog_token, options=self.options
+                token=config.sphinx_github_changelog_token,
+                options=self.options,
+                root_url=config.sphinx_github_changelog_root_repo,
+                graphql_url=config.sphinx_github_changelog_graphql_url,
             )
         except ChangelogError as exc:
             raise self.error(str(exc))
 
 
 def compute_changelog(
-    token: Optional[str], options: Dict[str, str]
+    token: Optional[str],
+    options: Dict[str, str],
+    root_url: Optional[str] = None,
+    graphql_url: Optional[str] = None,
 ) -> List[nodes.Node]:
     if not token:
         return no_token(changelog_url=options.get("changelog-url"))
 
-    owner_repo = extract_github_repo_name(url=options["github"])
-    releases = extract_releases(owner_repo=owner_repo, token=token)
+    owner_repo = extract_github_repo_name(url=options["github"], root_url=root_url)
+    releases = extract_releases(
+        owner_repo=owner_repo, token=token, graphql_url=graphql_url
+    )
 
     pypi_name = extract_pypi_package_name(url=options.get("pypi"))
 
@@ -72,14 +80,19 @@ def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     return result
 
 
-def extract_github_repo_name(url: str) -> str:
+def extract_github_repo_name(url: str, root_url: Optional[str] = None) -> str:
     stripped_url = url.rstrip("/")
-    prefix, postfix = "https://github.com/", "/releases"
+    prefix, postfix = (
+        root_url if root_url is not None else "https://github.com/",
+        "/releases",
+    )
+    if not prefix.endswith("/"):
+        prefix += "/"
     url_is_correct = stripped_url.startswith(prefix) and stripped_url.endswith(postfix)
     if not url_is_correct:
         raise ChangelogError(
             "Changelog needs a Github releases URL "
-            f"(https://github.com/:owner/:repo/releases). Received {url}"
+            f"({prefix}:owner/:repo/releases). Received {url}"
         )
 
     return stripped_url[len(prefix) : -len(postfix)]
@@ -142,7 +155,9 @@ def node_for_release(
     return section
 
 
-def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
+def extract_releases(
+    owner_repo: str, token: str, graphql_url: Optional[str] = None
+) -> Iterable[Dict[str, Any]]:
     # Necessary for GraphQL
     owner, repo = owner_repo.split("/")
     query = """
@@ -161,7 +176,7 @@ def extract_releases(owner_repo: str, token: str) -> Iterable[Dict[str, Any]]:
     )
     full_query = {"query": query.replace("\n", "")}
 
-    url = "https://api.github.com/graphql"
+    url = "https://api.github.com/graphql" if graphql_url is None else graphql_url
 
     try:
         result = github_call(url=url, query=full_query, token=token)
