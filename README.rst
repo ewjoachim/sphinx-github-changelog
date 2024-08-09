@@ -150,6 +150,14 @@ Extension options (``conf.py``)
   provided, the build will still pass but the changelog will not be built, and
   a link to the ``changelog-url`` will be displayed (if provided).
 
+- ``sphinx_github_changelog_root_repo`` (optional): Root url to the repository,
+  defaults to "https://github.com/". Useful if you're using a self-hosted GitHub
+  instance.
+
+- ``sphinx_github_changelog_graphql_url`` (optional): Url to graphql api, defaults
+  to "https://api.github.com/graphql". Useful if you're using a self-hosted GitHub
+  instance.
+
 .. _ReadTheDocs: https://readthedocs.org/
 
 Directive
