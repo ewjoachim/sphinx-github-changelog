@@ -6,5 +6,4 @@ This documentation itself is "drinking its own champagne": it uses
 
 .. changelog::
     :changelog-url: https://sphinx-github-changelog.readthedocs.io/en/stable/#changelog
-    :github: https://github.com/peopledoc/sphinx-github-changelog/releases/
     :pypi: https://pypi.org/project/sphinx-github-changelog/
