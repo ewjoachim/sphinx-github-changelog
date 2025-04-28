@@ -4,7 +4,7 @@ import xml.dom.minidom
 import pytest
 import requests
 
-from sphinx_github_changelog import changelog
+from sphinx_github_changelog import changelog, credentials, urls
 
 
 @pytest.fixture
@@ -41,11 +41,23 @@ def canonicalize(value):
     )
 
 
-def test_compute_changelog_no_token():
-    nodes = changelog.compute_changelog(token=None, options={})
-    assert len(nodes) == 1
-
+def test_compute_changelog_no_token(monkeypatch):
+    monkeypatch.setattr(credentials, "get_github_token", lambda host: None)
+    nodes = changelog.compute_changelog(
+        token=None, options={"github": "https://github.com/a/b/releases"}
+    )
     assert "Changelog was not built" in node_to_string(nodes[0])
+
+
+def test_compute_changelog_no_url(temp_git):
+    with pytest.raises(
+        changelog.ChangelogError,
+        match=(
+            r"^No :github: release URL provided and unable to determine it from "
+            r"git remotes. "
+        ),
+    ):
+        changelog.compute_changelog(token=None, options={})
 
 
 def test_compute_changelog_token(extract_releases):
@@ -61,12 +73,19 @@ def test_no_token_no_url():
         <list>
             <warning>
                 <paragraph>
-                    Changelog was not built because
+                    Changelog was not built because no GitHub authentication token
+                    was found. An access token can be provided using the
+                    <literal>SPHINX_GITHUB_CHANGELOG_TOKEN</literal>
+                    environment variable or the
                     <literal>sphinx_github_changelog_token</literal>
-                    parameter is missing in the documentation configuration.
+                    parameter in
+                    <literal>conf.py</literal>
+                    , or it can be automatically located from a configured git
+                    credential helper.
                 </paragraph>
             </warning>
-        </list>"""
+        </list>
+        """
     )
 
 
@@ -78,9 +97,15 @@ def test_no_token_url():
         <list>
             <warning>
                 <paragraph>
-                    Changelog was not built because
+                    Changelog was not built because no GitHub authentication token
+                    was found. An access token can be provided using the
+                    <literal>SPHINX_GITHUB_CHANGELOG_TOKEN</literal>
+                    environment variable or the
                     <literal>sphinx_github_changelog_token</literal>
-                    parameter is missing in the documentation configuration.
+                    parameter in
+                    <literal>conf.py</literal>
+                    , or it can be automatically located from a configured git
+                    credential helper.
                 </paragraph>
             </warning>
             <tip>
@@ -285,3 +310,18 @@ def test_github_call_http_error_connection(requests_mock):
 )
 def test_get_release_title(title, tag, expected):
     assert changelog.get_release_title(title=title, tag=tag) == expected
+
+
+def test_get_token_from_env(monkeypatch):
+    monkeypatch.setenv("SPHINX_GITHUB_CHANGELOG_TOKEN", "testtoken")
+    assert credentials.get_token_from_env() == "testtoken"
+    monkeypatch.delenv("SPHINX_GITHUB_CHANGELOG_TOKEN", raising=False)
+    assert credentials.get_token_from_env() is None
+
+
+def test_get_default_github_url():
+    """We can get the default GitHub URL in this repository."""
+    assert (
+        urls.get_default_github_url()
+        == "https://github.com/ewjoachim/sphinx-github-changelog"
+    )

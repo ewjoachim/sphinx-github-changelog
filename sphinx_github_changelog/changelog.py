@@ -8,6 +8,8 @@ from docutils import nodes
 # https://github.com/tk0miya/docutils-stubs/issues/33
 from docutils.parsers.rst import Directive, directives  # type: ignore
 
+from . import credentials, urls
+
 
 class ChangelogError(Exception):
     pass
@@ -46,10 +48,39 @@ def compute_changelog(
     root_url: Optional[str] = None,
     graphql_url: Optional[str] = None,
 ) -> List[nodes.Node]:
+
+    if options.get("github"):
+        # If a github URL is explicitly provided, validate that it is in
+        # the correct format i.e. refers to the /releases page.
+        github_url = options["github"]
+        root_url = root_url or urls.get_root_url(github_url)
+        owner_repo = extract_github_repo_name(github_url, root_url)
+    else:
+        # If no github URL is provided, try to get it from the git remote
+        # and validate that it is in the correct format.
+        remote_url = urls.get_default_github_url()
+        parsed_repo = remote_url and urls.parse_github_repo_from_url(remote_url)
+        if not parsed_repo:
+            raise ChangelogError(
+                "No :github: release URL provided and unable to determine it from "
+                "git remotes. Please provide a GitHub release URL in the format "
+                "(https://github.com/:owner/:repo/releases)"
+            )
+        owner_repo = parsed_repo
+        github_url = f"{remote_url}/releases"
+
+    # If graphql_url is not provided, derive from github_url
+    if not graphql_url:
+        graphql_url = urls.get_github_graphql_url(github_url)
+
+    # If token is not provided, try to get it from helpers
+    if not token:
+        host = urls.get_github_host_from_url(github_url)
+        token = credentials.get_github_token(host)
+
     if not token:
         return no_token(changelog_url=options.get("changelog-url"))
 
-    owner_repo = extract_github_repo_name(url=options["github"], root_url=root_url)
     releases = extract_releases(
         owner_repo=owner_repo, token=token, graphql_url=graphql_url
     )
@@ -65,9 +96,18 @@ def compute_changelog(
 
 def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     par = nodes.paragraph()
-    par += nodes.Text("Changelog was not built because ")
+    par += nodes.Text(
+        "Changelog was not built because no GitHub authentication token was found. "
+        "An access token can be provided using the "
+    )
+    par += nodes.literal("", "SPHINX_GITHUB_CHANGELOG_TOKEN")
+    par += nodes.Text(" environment variable or the ")
     par += nodes.literal("", "sphinx_github_changelog_token")
-    par += nodes.Text(" parameter is missing in the documentation configuration.")
+    par += nodes.Text(" parameter in ")
+    par += nodes.literal("", "conf.py")
+    par += nodes.Text(
+        ", or it can be automatically located from a configured git credential helper."
+    )
     result: List[nodes.Node] = [nodes.warning("", par)]
 
     if changelog_url:

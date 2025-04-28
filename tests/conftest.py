@@ -1,4 +1,6 @@
 import os
+import subprocess
+from pathlib import Path
 
 import pytest
 from sphinx.testing.path import path
@@ -35,3 +37,13 @@ def env():
     yield os.environ
     os.environ.clear()
     os.environ.update(old_env)
+
+
+@pytest.fixture
+def temp_git(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Fixture to create a temporary git repository."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init"], cwd=repo)
+    monkeypatch.chdir(repo)
+    return repo
