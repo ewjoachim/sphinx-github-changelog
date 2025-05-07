@@ -12,15 +12,9 @@ from typing import Optional
 
 
 def get_token_from_env(host: str = "github.com") -> Optional[str]:
-    """
-    Get GitHub token from the SPHINX_GITHUB_CHANGELOG_TOKEN environment variable.
+    """Get a GitHub token from the SPHINX_GITHUB_CHANGELOG_TOKEN env var.
 
-    >>> import os; os.environ['SPHINX_GITHUB_CHANGELOG_TOKEN'] = 'abc123'
-    >>> get_token_from_env()
-    'abc123'
-    >>> del os.environ['SPHINX_GITHUB_CHANGELOG_TOKEN']
-    >>> get_token_from_env() is None
-    True
+    Return None if the environment variable is not set.
     """
     return os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
 
