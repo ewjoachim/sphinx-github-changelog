@@ -191,7 +191,7 @@ Extension options (``conf.py``)
 - ``sphinx_github_changelog_token``: GitHub API token, if needed.
 
 Two options are accepted for backwards compatibility, but are likely detected
-automatically from the ``:github:` parameter to the directive:
+automatically from the ``:github:`` parameter to the directive:
 
 - ``sphinx_github_changelog_root_repo`` (optional): Root URL to the repository.
 - ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
