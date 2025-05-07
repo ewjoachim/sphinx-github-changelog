@@ -44,6 +44,6 @@ def temp_git(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Fixture to create a temporary git repository."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    subprocess.run(["git", "init"], cwd=repo)
+    subprocess.run(["git", "init", "--initial-branch=main"], cwd=repo)
     monkeypatch.chdir(repo)
     return repo

@@ -5,6 +5,7 @@ Provides functions to obtain a GitHub token using environment variables,
 git credential helpers, or the GitHub CLI.
 """
 
+from contextlib import suppress
 import os
 import subprocess
 from typing import Optional
@@ -24,6 +25,16 @@ def get_token_from_env(host: str = "github.com") -> Optional[str]:
     return os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
 
 
+def is_github_token(token: str) -> bool:
+    """Check if the given string appears to be a GitHub token.
+
+    See 
+    https://github.blog/changelog/2021-03-31-authentication-token-format-updates-are-generally-available/
+    for the prefixes that indicate a GitHub token.
+    """
+    return token.startswith(("ghp_", "gho_", "ghu_"))
+
+
 def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
     """
     Get a GitHub access token using git's credential helper.
@@ -32,7 +43,7 @@ def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
     >>> token is None or isinstance(token, str)
     True
     """
-    try:
+    with suppress(subprocess.CalledProcessError, FileNotFoundError):
         resp = subprocess.check_output(
             ["git", "credential", "fill"],
             input=f"protocol=https\nhost={host}\n",
@@ -40,23 +51,19 @@ def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
         )
         for ln in resp.splitlines():
             key, eq, value = ln.partition("=")
-            if key == "password":
+            if key == "password" and is_github_token(value):
                 return value
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return None
     return None
 
 
 def get_token_from_gh_cli(host: str = "github.com") -> Optional[str]:
     """Get a GitHub token using the GitHub CLI (gh auth token)."""
-    try:
+    with suppress(subprocess.CalledProcessError, FileNotFoundError):
         token = subprocess.check_output(
             ["gh", "auth", "token", f"--hostname={host}"], text=True
         ).strip()
         if token:
             return token
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return None
     return None
 
 

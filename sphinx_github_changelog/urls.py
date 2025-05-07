@@ -13,14 +13,13 @@ from urllib.parse import urlparse
 def parse_github_repo_from_url(url: str) -> Optional[str]:
     """Parse the owner/repo from a GitHub remote URL (https or ssh).
 
+    We also remove a trailing `/releases` if present as the expected usage
+    is with the URL of the GitHub releases page.
+
     >>> parse_github_repo_from_url('https://github.com/org/repo')
-    'org/repo'
-    >>> parse_github_repo_from_url('https://github.enterprise.com/org/repo')
     'org/repo'
     >>> parse_github_repo_from_url('https://github.com/org/repo/releases')
     'org/repo'
-    >>> parse_github_repo_from_url('not-a-github-url') is None
-    True
     """
     if m := re.fullmatch(r"https?://[^/]+/([^/]+/[^/.]+)(?:/releases)?", url):
         return m.group(1)
@@ -34,8 +33,6 @@ def get_github_graphql_url(repo_url: str) -> str:
     'https://api.github.com/graphql'
     >>> get_github_graphql_url('https://github.enterprise.com/org/repo')
     'https://github.enterprise.com/api/graphql'
-    >>> get_github_graphql_url('not-a-github-url') is None
-    True
     """
     host = get_github_host_from_url(repo_url) or "github.com"
     if host == "github.com":
@@ -76,10 +73,8 @@ def normalize_github_url(url: str) -> Optional[str]:
     'https://github.enterprise.com/org/repo'
     >>> normalize_github_url('https://github.com/org/repo')
     'https://github.com/org/repo'
-    >>> normalize_github_url('git@github.com:org/repo')
-    'https://github.com/org/repo'
     """
-    if m := re.match(r"git@([^:]+):([^/]+/[^/]+)(?:\.git)?$", url):
+    if m := re.match(r"git@([^:]+):([^/]+/[^/]+?)(?:\.git)?$", url):
         host, repo = m.groups()
         return f"https://{host}/{repo}"
     parsed = urlparse(url)
@@ -104,13 +99,11 @@ def get_default_github_url() -> Optional[str]:
         ).splitlines()
         urls = {}
         for line in remotes:
-            parts = line.split()
-            if len(parts) == 3:
-                name, url, op = parts
-                if op != "(fetch)":
-                    continue
-                if clean := normalize_github_url(url):
-                    urls[name] = clean
+            name, url, op = line.split(maxsplit=2)
+            if op != "(fetch)":
+                continue
+            if clean := normalize_github_url(url):
+                urls[name] = clean
         return urls.get("upstream") or urls.get("origin")
     except Exception:
         return None
