@@ -141,13 +141,18 @@ Reference documentation
 Automatic Configuration
 -----------------------
 
-The extension will automatically detect the GitHub repository URL from your
+The extension can automatically detect the GitHub repository URL from your
 git remotes in this order:
 
 1. ``upstream`` remote
 2. ``origin`` remote
 
 The GraphQL API and GitHub root URL are derived from this URL.
+
+If for any reason, you'd rather provide the repository explicitly (e.g. the doc
+repo doesn't match the repo you're releasing from, or anything else), you can
+define the ``:github:`` attribute to the directive. See :ref:`directive` for
+details.
 
 
 Authentication
@@ -192,6 +197,8 @@ automatically from the ``:github:` parameter to the directive:
 - ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
 
 .. _ReadTheDocs: https://readthedocs.org/
+
+.. _directive:
 
 Directive
 ---------
