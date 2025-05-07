@@ -5,9 +5,9 @@ Provides functions to obtain a GitHub token using environment variables,
 git credential helpers, or the GitHub CLI.
 """
 
-from contextlib import suppress
 import os
 import subprocess
+from contextlib import suppress
 from typing import Optional
 
 
@@ -28,7 +28,7 @@ def get_token_from_env(host: str = "github.com") -> Optional[str]:
 def is_github_token(token: str) -> bool:
     """Check if the given string appears to be a GitHub token.
 
-    See 
+    See
     https://github.blog/changelog/2021-03-31-authentication-token-format-updates-are-generally-available/
     for the prefixes that indicate a GitHub token.
     """

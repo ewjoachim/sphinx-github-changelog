@@ -1,13 +1,15 @@
 """Test for identifying repository configuration from URLs."""
-import pytest
+
 from typing import Optional
 
+import pytest
+
 from sphinx_github_changelog.urls import (
-    parse_github_repo_from_url,
     get_github_graphql_url,
     get_github_host_from_url,
     get_root_url,
     normalize_github_url,
+    parse_github_repo_from_url,
 )
 
 
@@ -29,7 +31,10 @@ def test_parse_github_repo_from_url(url: str, expected: Optional[str]) -> None:
     "url, expected",
     [
         ("https://github.com/org/repo.git", "https://api.github.com/graphql"),
-        ("https://github.enterprise.com/org/repo", "https://github.enterprise.com/api/graphql"),
+        (
+            "https://github.enterprise.com/org/repo",
+            "https://github.enterprise.com/api/graphql",
+        ),
         ("not-a-github-url", "https://api.github.com/graphql"),
     ],
 )
@@ -66,10 +71,13 @@ def test_get_root_url(url: str, expected: str) -> None:
     "url, expected",
     [
         ("git@github.com:org/repo.git", "https://github.com/org/repo"),
-        ("https://github.enterprise.com/org/repo.git", "https://github.enterprise.com/org/repo"),
+        (
+            "https://github.enterprise.com/org/repo.git",
+            "https://github.enterprise.com/org/repo",
+        ),
         ("https://github.com/org/repo", "https://github.com/org/repo"),
         ("git@github.com:org/repo", "https://github.com/org/repo"),
-        ('not-a-github-url', None),
+        ("not-a-github-url", None),
     ],
 )
 def test_normalize_github_url(url: str, expected: str) -> None:
