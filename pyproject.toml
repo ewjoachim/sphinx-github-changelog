@@ -1,46 +1,59 @@
-[tool.poetry]
+[project]
 name = "sphinx-github-changelog"
 version = "0.0.0"
 description = "Build a sphinx changelog from GitHub Releases"
-authors = ["Joachim Jablon <ewjoachim@gmail.com>"]
+authors = [{ name = "Joachim Jablon", email = "ewjoachim@gmail.com" }]
+requires-python = "~=3.8"
+readme = "README.rst"
 license = "MIT"
+keywords = [
+    "sphinx",
+    "github",
+    "releases",
+    "changelog",
+]
 classifiers = [
     "Topic :: Documentation",
     "Topic :: Documentation :: Sphinx",
     "Framework :: Sphinx",
     "Framework :: Sphinx :: Extension",
 ]
-readme = "README.rst"
-keywords = ["sphinx", "github", "releases", "changelog"]
-homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
-repository = "https://github.com/ewjoachim/sphinx-github-changelog"
-documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
+dependencies = [
+    "docutils",
+    "requests",
+    "Sphinx",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-docutils = "*"
-requests = "*"
-Sphinx = "*"
+[project.urls]
+Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
+Repository = "https://github.com/ewjoachim/sphinx-github-changelog"
+Documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
-[tool.poetry.group.dev.dependencies]
-black = "*"
-check-manifest = "*"
-doc8 = "*"
-flake8 = "*"
-isort = "*"
-mypy = "*"
-pytest = "*"
-pytest-cov = "*"
-pytest-mock = "*"
-requests-mock = "*"
-pre-commit = "*"
-dunamai = "*"
-types-requests = "*"
-types-docutils = "*"
+[dependency-groups]
+dev = [
+    "black",
+    "check-manifest",
+    "doc8",
+    "flake8",
+    "isort",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "requests-mock",
+    "pre-commit",
+    "dunamai",
+    "types-requests",
+    "types-docutils",
+]
+docs = ["sphinx-rtd-theme"]
 
-[tool.poetry.group.docs.dependencies]
-sphinx-rtd-theme = "*"
+[tool.uv]
+default-groups = [
+    "dev",
+    "docs",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
