@@ -50,12 +50,7 @@ jobs:
         id: pre-commit-pyright-version
         run: >
           uv export --format pylock.toml
-          | python -c "import tomllib,sys;
-                       print(next(
-                           e['version']
-                           for e in tomllib.loads(sys.stdin.read())['packages']
-                           if e['name'] == 'pyright'
-                       ))"
+          | python -c "import tomllib,sys; print('pyright-version='+next(e['version'] for e in tomllib.loads(sys.stdin.read())['packages'] if e['name'] == 'pyright' ))"
           >> $GITHUB_OUTPUT
 
       - uses: jakebailey/pyright-action@v2
