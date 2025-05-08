@@ -3,50 +3,76 @@ name: CI
 on:
   pull_request:
   push:
+    branches:
+      - main
+    tags:
+      - '*'
 
 jobs:
-  build:
+  tests:
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        script: [tests]
-      fail-fast: false
+        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
-    name: "py${{ matrix.python_version }} / ${{ matrix.script }}"
+    name: "py${{ matrix.python_version }}"
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - name: Set up Python
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Set up UV
+        id: setup-uv
+        uses: astral-sh/setup-uv@6b9c6063abd6010835644d4c2e1bef4cf5cd0fca
         with:
           python-version: ${{ matrix.python_version }}
 
-      - name: Pip, Pre-commit & Poetry caches
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/
-          key: ${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}-${{ hashFiles('.pre-commit-config.yaml') }}
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install Dev dependencies
-        run: poetry install
-
-      - name: Run ${{ matrix.script }}
-        run: poetry run scripts/${{ matrix.script }}
+      - name: Run tests
+        run: uv run pytest
         env:
-          PYTEST_ADDOPTS: "--cov-report=xml"
           GITHUB_TOKEN: ${{ github.token }}
 
-  report-status:
-    name: success
+  static-typing:
+    name: Run Pyright
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Report success
-        run: echo 'Success !'
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@6b9c6063abd6010835644d4c2e1bef4cf5cd0fca # v6
+        with:
+          python-version: "3.13"
+          activate-environment: true
+
+      - name: Install dependencies
+        run: uv sync --group=types
+
+      - name: Extract pyright version from pre-commit
+        id: pre-commit-pyright-version
+        run: >
+          uv export --format pylock.toml
+          | python -c "import tomllib,sys; print('pyright-version='+next(e['version'] for e in tomllib.loads(sys.stdin.read())['packages'] if e['name'] == 'pyright' ))"
+          >> $GITHUB_OUTPUT
+
+      - uses: jakebailey/pyright-action@v2
+        with:
+          version: ${{ steps.pre-commit-pyright-version.outputs.pyright-version }}
+
+  publish:
+    name: Publish package to PyPI
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    needs:
+      - tests
+      - static-typing
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-tags: true
+
+      - name: Build wheel & sdist
+        run: pipx run uv build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

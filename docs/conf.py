@@ -13,10 +13,10 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+from __future__ import annotations
 
 import os
 import pathlib
-from typing import List
 
 # -- Project information -----------------------------------------------------
 
@@ -35,12 +35,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_github_changelog",
 ]
-try:
-    import sphinxcontrib.spelling  # noqa
-except ImportError:
-    pass
-else:
-    extensions.append("sphinxcontrib.spelling")
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -58,10 +52,6 @@ default_role = "any"
 # https://github.com/sphinx-doc/sphinx/issues/7418
 suppress_warnings = ["ref.term"]
 
-# -- Spell check -------------------------------------------------------------
-
-spelling_word_list_filename = "spelling_wordlist.txt"
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -73,7 +63,7 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ["_static"]
-html_static_path: List[str] = []
+html_static_path: list[str] = []
 
 autoclass_content = "both"
 
