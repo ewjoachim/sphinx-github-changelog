@@ -25,8 +25,11 @@ def is_github_token(token: str) -> bool:
     See
     https://github.blog/changelog/2021-03-31-authentication-token-format-updates-are-generally-available/
     for the prefixes that indicate a GitHub token.
+
+    As of 2025-05-08 the prefixes are `ghp_`, `gho_`, `ghu_`, and `ghs_`. We
+    use a generic check for `gh?_` to allow for future prefixes.
     """
-    return token.startswith(("ghp_", "gho_", "ghu_"))
+    return token.startswith("gh") and token[3] == "_"
 
 
 def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
