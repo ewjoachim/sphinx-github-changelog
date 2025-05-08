@@ -151,7 +151,7 @@ The GraphQL API and GitHub root URL are derived from this URL.
 
 If for any reason, you'd rather provide the repository explicitly (e.g. the doc
 repo doesn't match the repo you're releasing from, or anything else), you can
-define the ``:github:`` attribute to the directive. See :ref:`directive` for
+define the ``:github:`` attribute to the directive. See directive_ for
 details.
 
 
@@ -161,7 +161,7 @@ Authentication
 The extension uses the GitHub GraphQL API to retrieve the changelog. This
 requires authentication using a GitHub API token.
 
-However if you use git over HTTPS, or the `gh` CLI, you probably already have a
+However if you use git over HTTPS, or the ``gh`` CLI, you probably already have a
 suitable token, which ``sphinx-github-changelog`` will automatically use.
 
 In CI like GitHub Actions you can pass a token explicitly as an environment
@@ -177,7 +177,7 @@ variable:
 In remaining cases you may need to create a personal access token. If the
 repository is public, the token doesn't need any special access (you can
 uncheck eveything). For private and internal repositories, the token must
-have `repo` scope (classic tokens) or `contents: read` access (fine-grained
+have ``repo`` scope (classic tokens) or ``contents: read`` access (fine-grained
 tokens).
 
 Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` environment variable.
