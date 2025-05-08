@@ -51,13 +51,6 @@ In your Sphinx documentation ``conf.py``:
         "sphinx_github_changelog",
     ]
 
-    # Provide a GitHub API token:
-    # Pass the SPHINX_GITHUB_CHANGELOG_TOKEN environment variable to your build
-    # OR
-    # You can retrieve your token any other way you want, but of course, please
-    # don't commit secrets to git, especially on a public repository
-    sphinx_github_changelog_token = ...
-
 In your documentation:
 
 .. code-block:: restructuredtext
@@ -66,6 +59,12 @@ In your documentation:
         :changelog-url: https://your-project.readthedocs.io/en/stable/#changelog
         :github: https://github.com/you/your-project/releases/
         :pypi: https://pypi.org/project/your-project/
+
+or more minimally (but not necessarily recommended):
+
+.. code-block:: restructuredtext
+
+    .. changelog::
 
 
 See the end result for this project on ReadTheDocs__.
@@ -139,26 +138,67 @@ draft GitHub Release and press "Publish Release". That's it.
 Reference documentation
 =======================
 
+Automatic Configuration
+-----------------------
+
+The extension can automatically detect the GitHub repository URL from your
+git remotes in this order:
+
+1. ``upstream`` remote
+2. ``origin`` remote
+
+The GraphQL API and GitHub root URL are derived from this URL.
+
+If for any reason, you'd rather provide the repository explicitly (e.g. the doc
+repo doesn't match the repo you're releasing from, or anything else), you can
+define the ``:github:`` attribute to the directive. See directive_ for
+details.
+
+
+Authentication
+--------------
+
+The extension uses the GitHub GraphQL API to retrieve the changelog. This
+requires authentication using a GitHub API token.
+
+However if you use git over HTTPS, or the ``gh`` CLI, you probably already have a
+suitable token, which ``sphinx-github-changelog`` will automatically use.
+
+In CI like GitHub Actions you can pass a token explicitly as an environment
+variable:
+
+.. code-block:: yaml
+
+    - name: Build documentation
+      run: make html
+      env:
+        SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ github.token }}
+
+In remaining cases you may need to create a personal access token. If the
+repository is public, the token doesn't need any special access (you can
+uncheck eveything). For private and internal repositories, the token must
+have ``repo`` scope (classic tokens) or ``contents: read`` access (fine-grained
+tokens).
+
+Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` environment variable.
+You can also set the token as ``sphinx_github_changelog_token`` in ``conf.py``
+but you should never commit secrets such as this.
+
+
 Extension options (``conf.py``)
 -------------------------------
 
-- ``sphinx_github_changelog_token``: GitHub API token.
-  If the repository is public, the token doesn't need any special access (you
-  can uncheck eveything). If the repository is private, you'll need to give
-  your token enough access to read the releases. Defaults to the value of the
-  environment variable ``SPHINX_GITHUB_CHANGELOG_TOKEN``. If no value is
-  provided, the build will still pass but the changelog will not be built, and
-  a link to the ``changelog-url`` will be displayed (if provided).
+- ``sphinx_github_changelog_token``: GitHub API token, if needed.
 
-- ``sphinx_github_changelog_root_repo`` (optional): Root url to the repository,
-  defaults to "https://github.com/". Useful if you're using a self-hosted GitHub
-  instance.
+Two options are accepted for backwards compatibility, but are likely detected
+automatically from the ``:github:`` parameter to the directive:
 
-- ``sphinx_github_changelog_graphql_url`` (optional): Url to graphql api, defaults
-  to "https://api.github.com/graphql". Useful if you're using a self-hosted GitHub
-  instance.
+- ``sphinx_github_changelog_root_repo`` (optional): Root URL to the repository.
+- ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
 
 .. _ReadTheDocs: https://readthedocs.org/
+
+.. _directive:
 
 Directive
 ---------
@@ -173,7 +213,8 @@ Directive
 Attributes
 ~~~~~~~~~~
 
-- ``github`` (**required**): URL to the releases page of the repository.
+- ``github`` (optional): URL to the releases page of the repository.
+  If not provided, auto‑detected from your git remote, as described above.
 - ``changelog-url`` (optional): URL to the built version of your changelog.
   ``sphinx-github-changelog`` will display a link to your built changelog if the GitHub
   token is not provided (hopefully, this does not happen in your built documentation)

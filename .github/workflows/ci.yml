@@ -3,41 +3,29 @@ name: CI
 on:
   pull_request:
   push:
-    branches:
-      - "main"
-    tags:
-      - "*"
 
 jobs:
   build:
     strategy:
       matrix:
-        include:
-          - python_version: "3.8"
-            script: tests
-          - python_version: "3.9"
-            script: tests
-          - python_version: "3.10"
-            script: tests
-          - python_version: "3.11"
-            script: tests
-          - python_version: "3.12"
-            script: tests
+        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        script: [tests]
+      fail-fast: false
 
     name: "py${{ matrix.python_version }} / ${{ matrix.script }}"
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         id: setup-python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python_version }}
 
       - name: Pip, Pre-commit & Poetry caches
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/
@@ -53,6 +41,7 @@ jobs:
         run: poetry run scripts/${{ matrix.script }}
         env:
           PYTEST_ADDOPTS: "--cov-report=xml"
+          GITHUB_TOKEN: ${{ github.token }}
 
   report-status:
     name: success

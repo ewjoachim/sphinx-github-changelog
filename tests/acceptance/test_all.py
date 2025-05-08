@@ -22,6 +22,6 @@ def test_error(app, status, warning):
     app.builder.build_all()
     assert (
         "Changelog needs a Github releases URL "
-        "(https://github.com/:owner/:repo/releases). "
+        "(https://wrong-url.com/:owner/:repo/releases). "
         "Received https://wrong-url.com/" in warning.getvalue()
     )
