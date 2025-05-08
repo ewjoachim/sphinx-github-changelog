@@ -43,7 +43,6 @@ def export_from_uv_lock(group_args):
     base_export_args = [
         "uv",
         "export",
-        "--all-extras",
         "--no-hashes",
         "--no-header",
         "--no-emit-project",
