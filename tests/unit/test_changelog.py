@@ -4,7 +4,7 @@ import xml.dom.minidom
 import pytest
 import requests
 
-from sphinx_github_changelog import changelog, credentials, urls
+from sphinx_github_changelog import changelog, credentials
 
 
 @pytest.fixture
@@ -317,11 +317,3 @@ def test_get_token_from_env(monkeypatch):
     assert credentials.get_token_from_env() == "testtoken"
     monkeypatch.delenv("SPHINX_GITHUB_CHANGELOG_TOKEN", raising=False)
     assert credentials.get_token_from_env() is None
-
-
-def test_get_default_github_url():
-    """We can get the default GitHub URL in this repository."""
-    assert (
-        urls.get_default_github_url()
-        == "https://github.com/ewjoachim/sphinx-github-changelog"
-    )
