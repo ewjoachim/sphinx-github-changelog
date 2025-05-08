@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 from sphinx_github_changelog import changelog

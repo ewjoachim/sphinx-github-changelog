@@ -1,6 +1,6 @@
 """Test for identifying repository configuration from URLs."""
 
-from typing import Optional
+from __future__ import annotations
 
 import pytest
 
@@ -22,7 +22,7 @@ from sphinx_github_changelog.urls import (
         ("not-a-github-url", None),
     ],
 )
-def test_parse_github_repo_from_url(url: str, expected: Optional[str]) -> None:
+def test_parse_github_repo_from_url(url: str, expected: str | None) -> None:
     """Should extract 'owner/repo' or return None for invalid URLs."""
     assert parse_github_repo_from_url(url) == expected
 
@@ -38,7 +38,7 @@ def test_parse_github_repo_from_url(url: str, expected: Optional[str]) -> None:
         ("not-a-github-url", "https://api.github.com/graphql"),
     ],
 )
-def test_get_github_graphql_url(url: str, expected: Optional[str]) -> None:
+def test_get_github_graphql_url(url: str, expected: str | None) -> None:
     """Should derive the correct GraphQL endpoint or None for invalid URLs."""
     assert get_github_graphql_url(url) == expected
 

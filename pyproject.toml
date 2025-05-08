@@ -1,28 +1,29 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+pattern = "default-unprefixed"
+
 [project]
 name = "sphinx-github-changelog"
-version = "0.0.0"
+dynamic = ["version"]
 description = "Build a sphinx changelog from GitHub Releases"
 authors = [{ name = "Joachim Jablon", email = "ewjoachim@gmail.com" }]
 requires-python = "~=3.8"
 readme = "README.rst"
 license = "MIT"
-keywords = [
-    "sphinx",
-    "github",
-    "releases",
-    "changelog",
-]
+keywords = ["sphinx", "github", "releases", "changelog"]
 classifiers = [
     "Topic :: Documentation",
     "Topic :: Documentation :: Sphinx",
     "Framework :: Sphinx",
     "Framework :: Sphinx :: Extension",
 ]
-dependencies = [
-    "docutils",
-    "requests",
-    "Sphinx",
-]
+dependencies = ["docutils", "requests", "Sphinx"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
@@ -31,29 +32,45 @@ Documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
 [dependency-groups]
 dev = [
-    "black",
-    "check-manifest",
     "doc8",
-    "flake8",
-    "isort",
-    "mypy",
     "pytest",
     "pytest-cov",
     "pytest-mock",
     "requests-mock",
-    "pre-commit",
-    "dunamai",
-    "types-requests",
-    "types-docutils",
+    "pyright",
 ]
 docs = ["sphinx-rtd-theme"]
+types = ["types-requests", "types-docutils"]
 
 [tool.uv]
-default-groups = [
-    "dev",
-    "docs",
+default-groups = ["dev", "docs"]
+
+[tool.pyright]
+exclude = ["tests", ".venv", "scripts", ".github"]
+
+[tool.ruff]
+target-version = "py39"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+extend-select = [
+    "UP",  # pyupgrade
+    "I",   # isort
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "RUF", # ruff
+]
+fixable = ["ALL"]
+extend-ignore = [
+    "E501", # line too long
+    # It's not exactly false but it's not supported enough by our dependencies,
+    # so ruff is fighting with Pyright on this.
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]
+
+[tool.doc8]
+max-line-length = 88
+ignore-path = "docs/_build,.venv"

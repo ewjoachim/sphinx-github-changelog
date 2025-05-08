@@ -4,13 +4,14 @@ Utilities for working with git remotes and GitHub URLs.
 Includes functions to parse remote URLs and derive GraphQL endpoints.
 """
 
+from __future__ import annotations
+
 import re
 import subprocess
-from typing import Optional
 from urllib.parse import urlparse
 
 
-def parse_github_repo_from_url(url: str) -> Optional[str]:
+def parse_github_repo_from_url(url: str) -> str | None:
     """Parse the owner/repo from a GitHub remote URL (https or ssh).
 
     We also remove a trailing `/releases` if present as the expected usage
@@ -64,7 +65,7 @@ def get_root_url(url: str) -> str:
     return f"{parsed.scheme}://{parsed.hostname or 'github.com'}/"
 
 
-def normalize_github_url(url: str) -> Optional[str]:
+def normalize_github_url(url: str) -> str | None:
     """Normalize a git remote URL to a plain HTTPS URL without .git.
 
     >>> normalize_github_url('git@github.com:org/repo.git')
@@ -86,7 +87,7 @@ def normalize_github_url(url: str) -> Optional[str]:
     return None
 
 
-def get_default_github_url() -> Optional[str]:
+def get_default_github_url() -> str | None:
     """Try to get the default GitHub remote URL from git remotes.
 
     Prefer upstream, then origin, if these are set and represent a

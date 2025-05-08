@@ -5,13 +5,14 @@ Provides functions to obtain a GitHub token using environment variables,
 git credential helpers, or the GitHub CLI.
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 from contextlib import suppress
-from typing import Optional
 
 
-def get_token_from_env(host: str = "github.com") -> Optional[str]:
+def get_token_from_env(host: str = "github.com") -> str | None:
     """Get a GitHub token from the SPHINX_GITHUB_CHANGELOG_TOKEN env var.
 
     Return None if the environment variable is not set.
@@ -32,7 +33,7 @@ def is_github_token(token: str) -> bool:
     return token.startswith("gh") and token[3] == "_"
 
 
-def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
+def get_token_from_git_credential(host: str = "github.com") -> str | None:
     """
     Get a GitHub access token using git's credential helper.
 
@@ -53,7 +54,7 @@ def get_token_from_git_credential(host: str = "github.com") -> Optional[str]:
     return None
 
 
-def get_token_from_gh_cli(host: str = "github.com") -> Optional[str]:
+def get_token_from_gh_cli(host: str = "github.com") -> str | None:
     """Get a GitHub token using the GitHub CLI (gh auth token)."""
     with suppress(subprocess.CalledProcessError, FileNotFoundError):
         token = subprocess.check_output(
@@ -64,7 +65,7 @@ def get_token_from_gh_cli(host: str = "github.com") -> Optional[str]:
     return None
 
 
-def get_github_token(host: str = "github.com") -> Optional[str]:
+def get_github_token(host: str = "github.com") -> str | None:
     """
     Try to obtain a GitHub token using several mechanisms in order.
 

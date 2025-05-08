@@ -1,4 +1,7 @@
-from typing import Any, Dict, Iterable, List, Optional
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any
 
 import requests
 from docutils import nodes
@@ -29,7 +32,7 @@ class ChangelogDirective(Directive):
     has_content = False
     add_index = False
 
-    def run(self) -> List[nodes.Node]:
+    def run(self) -> list[nodes.Node]:
         config = self.state.document.settings.env.config
         try:
             return compute_changelog(
@@ -43,12 +46,11 @@ class ChangelogDirective(Directive):
 
 
 def compute_changelog(
-    token: Optional[str],
-    options: Dict[str, str],
-    root_url: Optional[str] = None,
-    graphql_url: Optional[str] = None,
-) -> List[nodes.Node]:
-
+    token: str | None,
+    options: dict[str, str],
+    root_url: str | None = None,
+    graphql_url: str | None = None,
+) -> list[nodes.Node]:
     if options.get("github"):
         # If a github URL is explicitly provided, validate that it is in
         # the correct format i.e. refers to the /releases page.
@@ -94,7 +96,7 @@ def compute_changelog(
     return [n for n in result_nodes if n is not None]
 
 
-def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
+def no_token(changelog_url: str | None) -> list[nodes.Node]:
     par = nodes.paragraph()
     par += nodes.Text(
         "Changelog was not built because no GitHub authentication token was found. "
@@ -108,7 +110,7 @@ def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     par += nodes.Text(
         ", or it can be automatically located from a configured git credential helper."
     )
-    result: List[nodes.Node] = [nodes.warning("", par)]
+    result: list[nodes.Node] = [nodes.warning("", par)]
 
     if changelog_url:
         par2 = nodes.paragraph()
@@ -120,7 +122,7 @@ def no_token(changelog_url: Optional[str]) -> List[nodes.Node]:
     return result
 
 
-def extract_github_repo_name(url: str, root_url: Optional[str] = None) -> str:
+def extract_github_repo_name(url: str, root_url: str | None = None) -> str:
     stripped_url = url.rstrip("/")
     prefix, postfix = (
         root_url if root_url is not None else "https://github.com/",
@@ -138,7 +140,7 @@ def extract_github_repo_name(url: str, root_url: Optional[str] = None) -> str:
     return stripped_url[len(prefix) : -len(postfix)]
 
 
-def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
+def extract_pypi_package_name(url: str | None) -> str | None:
     if not url:
         return None
     stripped_url = url.rstrip("/")
@@ -150,18 +152,18 @@ def extract_pypi_package_name(url: Optional[str]) -> Optional[str]:
             f"(https://pypi.org/project/:project). Received {url}"
         )
 
-    return stripped_url[len(prefix) :]  # noqa
+    return stripped_url[len(prefix) :]
 
 
-def get_release_title(title: Optional[str], tag: str):
+def get_release_title(title: str | None, tag: str):
     if not title:
         return tag
     return title if tag in title else f"{tag}: {title}"
 
 
 def node_for_release(
-    release: Dict[str, Any], pypi_name: Optional[str] = None
-) -> Optional[nodes.Node]:
+    release: dict[str, Any], pypi_name: str | None = None
+) -> nodes.Node | None:
     if release["isDraft"]:
         return None  # For now, draft releases are excluded
 
@@ -183,7 +185,7 @@ def node_for_release(
     subtitle += nodes.reference("", "GitHub", refuri=release["url"])
     if pypi_name:
         subtitle += nodes.Text(" - ")
-        url = "https://pypi.org/project/" f"{pypi_name}/{tag}/"
+        url = f"https://pypi.org/project/{pypi_name}/{tag}/"
         subtitle += nodes.reference("", "PyPI", refuri=url)
 
     subtitle_paragraph = nodes.paragraph()
@@ -196,11 +198,11 @@ def node_for_release(
 
 
 def extract_releases(
-    owner_repo: str, token: str, graphql_url: Optional[str] = None
-) -> Iterable[Dict[str, Any]]:
+    owner_repo: str, token: str, graphql_url: str | None = None
+) -> Iterable[dict[str, Any]]:
     # Necessary for GraphQL
     owner, repo = owner_repo.split("/")
-    query = """
+    query = f"""
     query {{
         repository(owner: "{owner}", name: "{repo}") {{
             releases(orderBy: {{field: CREATED_AT, direction: DESC}}, first:100) {{
@@ -210,22 +212,18 @@ def extract_releases(
             }}
         }}
     }}
-    """.format(
-        owner=owner,
-        repo=repo,
-    )
+    """
     full_query = {"query": query.replace("\n", "")}
 
     url = "https://api.github.com/graphql" if graphql_url is None else graphql_url
 
+    result = github_call(url=url, query=full_query, token=token)
+    if "errors" in result:
+        raise ChangelogError(
+            "GitHub API error response: \n"
+            + "\n".join(e.get("message", str(e)) for e in result["errors"])
+        )
     try:
-        result = github_call(url=url, query=full_query, token=token)
-        if "errors" in result:
-            raise ChangelogError(
-                "GitHub API error response: \n"
-                + "\n".join(e.get("message", str(e)) for e in result["errors"])
-            )
-
         releases = result["data"]["repository"]["releases"]["nodes"]
         # If you don't have the right to see draft releases, they're "None"
         return [r for r in releases if r]
@@ -245,8 +243,8 @@ def github_call(url, token, query):
     except requests.HTTPError as exc:
         # GraphQL always responds 200
         raise ChangelogError(
-            f"Unexpected GitHub API error status code: {response.status_code}\n"
-            f"{response.text}"
+            f"Unexpected GitHub API error status code: {exc.response.status_code}\n"
+            f"{exc.response.text}"
         ) from exc
     except requests.RequestException as exc:
         raise ChangelogError(
