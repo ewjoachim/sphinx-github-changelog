@@ -21,7 +21,7 @@ import pathlib
 # -- Project information -----------------------------------------------------
 
 project = "Sphinx Github Changelog"
-with open(pathlib.Path(__file__).parents[1] / "LICENSE.rst") as f:
+with open(pathlib.Path(__file__).parents[1] / "LICENSE") as f:
     copyright = f.readlines()[2][len("Copyright (c) ") :]
 author = "Joachim Jablon"
 
