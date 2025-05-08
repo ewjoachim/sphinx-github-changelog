@@ -41,6 +41,7 @@ jobs:
         run: poetry run scripts/${{ matrix.script }}
         env:
           PYTEST_ADDOPTS: "--cov-report=xml"
+          GITHUB_TOKEN: ${{ github.token }}
 
   report-status:
     name: success
