@@ -1,19 +1,15 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 
 from sphinx_github_changelog import changelog
-from sphinx_github_changelog import metadata as _metadata_module
 
 __all__: list = []
 
 
-_metadata = _metadata_module.extract_metadata()
-__author__ = _metadata["author"]
-__author_email__ = _metadata["email"]
-__license__ = _metadata["license"]
-__url__ = _metadata["url"]
-__version__ = _metadata["version"]
+def version() -> str:
+    return importlib.metadata.version("sphinx-github-changelog")
 
 
 def setup(app):
@@ -37,7 +33,7 @@ def setup(app):
     app.add_directive("changelog", changelog.ChangelogDirective)
 
     return {
-        "version": __version__,
+        "version": version(),
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

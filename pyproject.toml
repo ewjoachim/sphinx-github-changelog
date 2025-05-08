@@ -74,3 +74,11 @@ required-imports = ["from __future__ import annotations"]
 [tool.doc8]
 max-line-length = 88
 ignore-path = "docs/_build,.venv"
+
+[tool.pytest.ini_options]
+addopts = ["-vv", "--strict-markers", "-rfE", "-m not benchmark"]
+testpaths = ["tests/unit", "tests/acceptance"]
+filterwarnings = """
+    error
+"""
+pythonpath = ["."]
