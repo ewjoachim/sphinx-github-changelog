@@ -1,7 +1,7 @@
 prune tests
 prune docs
 
-include LICENSE.rst
+include LICENSE
 
 exclude .editorconfig
 exclude .readthedocs.yml
