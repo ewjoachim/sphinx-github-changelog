@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -eux
-
-# This script is not meant to run inside poetry
-# It's expected to be passed a PYPI_TOKEN env var
-
-poetry version $(poetry run dunamai from git --pattern '(?P<base>\d+\.\d+\.\d+)')
-poetry publish --no-interaction --build --username "__token__" --password "$PYPI_TOKEN"
-git restore pyproject.toml
