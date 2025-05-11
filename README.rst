@@ -9,7 +9,7 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :target: https://pypi.org/pypi/sphinx-github-changelog
     :alt: Deployed to PyPI
 
-.. image:: https://img.shields.io/github/stars/ewjoachim/sphinx-github-changelog?logo=github&style=flat
+.. image:: https://img.shields.io/github/stars/ewjoachim/sphinx-github-changelog?style=flat&label=GitHub%20repo
     :target: https://github.com/ewjoachim/sphinx-github-changelog/
     :alt: GitHub Repository
 
