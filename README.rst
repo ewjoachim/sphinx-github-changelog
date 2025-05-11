@@ -113,27 +113,7 @@ But there is another way. Instead of providing the changelog, the ``CHANGELOG.rs
 file can hold a *link* to the changelog. This makes things much easier.
 ``sphinx-github-changelog`` encourages you to do that.
 
-A complete toolbelt
--------------------
-
-Alongside ``sphinx-github-changelog``, we suggest a few tools that play nice together:
-
-- `setuptools-scm`_ will compute your version in ``setup.py`` based on git tags.
-- `release-drafter`_ will keep a "Draft release" updated as you merge Pull Requests to
-  your repository, so you just have to slightly adjust the release body, and create a
-  tag.
-- Any Continuous Integration solution should be able to listen to new tags, and build
-  and upload distributions to PyPI. Don't forget to use `PyPI API tokens`_!
-- And ReadTheDocs_ to host your built documentation, of course.
-
-.. _`setuptools-scm`: https://pypi.org/project/setuptools-scm/
-.. _`release-drafter`: https://help.github.com/en/github/administering-a-repository/about-releases
 .. _towncrier: https://pypi.org/project/towncrier/
-.. _`PyPI API tokens`: https://pypi.org/help/#token
-.. _ReadTheDocs: https://readthedocs.org/
-
-If you're using all the tools above, then releasing is simple as proof-reading the
-draft GitHub Release and press "Publish Release". That's it.
 
 Reference documentation
 =======================
