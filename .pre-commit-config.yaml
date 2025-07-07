@@ -29,7 +29,7 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.400
+    rev: v1.1.402
     hooks:
       - id: pyright
         additional_dependencies:
@@ -83,18 +83,18 @@ repos:
           - urllib3==2.4.0
           - zipp==3.21.0 ; python_full_version < '3.10'
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.0
+    rev: v0.12.2
     hooks:
       - id: ruff
         args: [--fix, --unsafe-fixes, --show-fixes]
       - id: ruff-format
   - repo: https://github.com/PyCQA/doc8
-    rev: v1.1.2
+    rev: v2.0.0
     hooks:
       - id: doc8
 
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.23.1
+    rev: 1.25.0
     hooks:
       - id: django-upgrade
         args: [--target-version, '4.2'] # Replace with Django version
@@ -112,6 +112,6 @@ repos:
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.6.9
+    rev: 0.7.19
     hooks:
       - id: uv-lock
