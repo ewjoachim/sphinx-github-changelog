@@ -29,20 +29,21 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.400
+    rev: v1.1.403
     hooks:
       - id: pyright
         additional_dependencies:
           - alabaster==0.7.16 ; python_full_version < '3.10'
           - alabaster==1.0.0 ; python_full_version >= '3.10'
           - babel==2.17.0
-          - certifi==2025.4.26
-          - charset-normalizer==3.4.2
+          - certifi==2025.8.3
+          - charset-normalizer==3.4.3
           - colorama==0.4.6 ; sys_platform == 'win32'
-          - coverage==7.8.0
-          - doc8==1.1.2
+          - coverage==7.10.4
+          - doc8==1.1.2 ; python_full_version < '3.10'
+          - doc8==2.0.0 ; python_full_version >= '3.10'
           - docutils==0.21.2
-          - exceptiongroup==1.2.2 ; python_full_version < '3.11'
+          - exceptiongroup==1.3.0 ; python_full_version < '3.11'
           - idna==3.10
           - imagesize==1.4.1
           - importlib-metadata==8.7.0 ; python_full_version < '3.10'
@@ -51,19 +52,19 @@ repos:
           - markupsafe==3.0.2
           - nodeenv==1.9.1
           - packaging==25.0
-          - pbr==6.1.1
-          - pluggy==1.5.0
-          - pygments==2.19.1
-          - pyright==1.1.400
-          - pytest==8.3.5
-          - pytest-cov==6.1.1
-          - pytest-mock==3.14.0
-          - requests==2.32.3
+          - pbr==7.0.0
+          - pluggy==1.6.0
+          - pygments==2.19.2
+          - pyright==1.1.403
+          - pytest==8.4.1
+          - pytest-cov==6.2.1
+          - pytest-mock==3.14.1
+          - requests==2.32.4
           - requests-mock==1.12.1
           - restructuredtext-lint==1.4.0
           - roman-numerals-py==3.1.0 ; python_full_version >= '3.11'
-          - setuptools==80.3.1
-          - snowballstemmer==3.0.0.1
+          - setuptools==80.9.0
+          - snowballstemmer==3.0.1
           - sphinx==7.4.7 ; python_full_version < '3.10'
           - sphinx==8.1.3 ; python_full_version == '3.10.*'
           - sphinx==8.2.3 ; python_full_version >= '3.11'
@@ -77,11 +78,11 @@ repos:
           - sphinxcontrib-serializinghtml==2.0.0
           - stevedore==5.4.1
           - tomli==2.2.1 ; python_full_version <= '3.11'
-          - types-docutils==0.21.0.20241128
-          - types-requests==2.32.0.20250328
-          - typing-extensions==4.13.2
-          - urllib3==2.4.0
-          - zipp==3.21.0 ; python_full_version < '3.10'
+          - types-docutils==0.22.0.20250814
+          - types-requests==2.32.4.20250809
+          - typing-extensions==4.14.1
+          - urllib3==2.5.0
+          - zipp==3.23.0 ; python_full_version < '3.10'
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.2
     hooks:
@@ -89,7 +90,7 @@ repos:
         args: [--fix, --unsafe-fixes, --show-fixes]
       - id: ruff-format
   - repo: https://github.com/PyCQA/doc8
-    rev: v1.1.2
+    rev: v2.0.0
     hooks:
       - id: doc8
 
