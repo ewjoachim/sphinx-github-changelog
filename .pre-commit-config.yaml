@@ -29,7 +29,7 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.403
+    rev: v1.1.404
     hooks:
       - id: pyright
         additional_dependencies:
@@ -84,7 +84,7 @@ repos:
           - urllib3==2.5.0
           - zipp==3.23.0 ; python_full_version < '3.10'
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.9
+    rev: v0.12.10
     hooks:
       - id: ruff
         args: [--fix, --unsafe-fixes, --show-fixes]
@@ -113,6 +113,6 @@ repos:
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.8.12
+    rev: 0.8.13
     hooks:
       - id: uv-lock
