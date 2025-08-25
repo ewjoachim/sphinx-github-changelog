@@ -29,7 +29,7 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.403
+    rev: v1.1.404
     hooks:
       - id: pyright
         additional_dependencies:
@@ -39,7 +39,7 @@ repos:
           - certifi==2025.8.3
           - charset-normalizer==3.4.3
           - colorama==0.4.6 ; sys_platform == 'win32'
-          - coverage==7.10.4
+          - coverage==7.10.5
           - doc8==1.1.2 ; python_full_version < '3.10'
           - doc8==2.0.0 ; python_full_version >= '3.10'
           - docutils==0.21.2
@@ -52,14 +52,14 @@ repos:
           - markupsafe==3.0.2
           - nodeenv==1.9.1
           - packaging==25.0
-          - pbr==7.0.0
+          - pbr==7.0.1
           - pluggy==1.6.0
           - pygments==2.19.2
-          - pyright==1.1.403
+          - pyright==1.1.404
           - pytest==8.4.1
           - pytest-cov==6.2.1
           - pytest-mock==3.14.1
-          - requests==2.32.4
+          - requests==2.32.5
           - requests-mock==1.12.1
           - restructuredtext-lint==1.4.0
           - roman-numerals-py==3.1.0 ; python_full_version >= '3.11'
@@ -78,7 +78,7 @@ repos:
           - sphinxcontrib-serializinghtml==2.0.0
           - stevedore==5.4.1
           - tomli==2.2.1 ; python_full_version <= '3.11'
-          - types-docutils==0.22.0.20250814
+          - types-docutils==0.22.0.20250822
           - types-requests==2.32.4.20250809
           - typing-extensions==4.14.1
           - urllib3==2.5.0
