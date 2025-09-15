@@ -56,7 +56,7 @@ repos:
           - pygments==2.19.2
           - pyright==1.1.405
           - pytest==8.4.2
-          - pytest-cov==6.3.0
+          - pytest-cov==7.0.0
           - pytest-mock==3.15.0
           - requests==2.32.5
           - requests-mock==1.12.1
@@ -76,8 +76,8 @@ repos:
           - sphinxcontrib-serializinghtml==2.0.0
           - stevedore==5.5.0
           - tomli==2.2.1 ; python_full_version <= '3.11'
-          - types-docutils==0.22.0.20250822
-          - types-requests==2.32.4.20250809
+          - types-docutils==0.22.0.20250914
+          - types-requests==2.32.4.20250913
           - typing-extensions==4.15.0
           - urllib3==2.5.0
           - zipp==3.23.0 ; python_full_version < '3.10'
