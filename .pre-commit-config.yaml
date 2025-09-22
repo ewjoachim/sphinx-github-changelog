@@ -39,7 +39,7 @@ repos:
           - certifi==2025.8.3
           - charset-normalizer==3.4.3
           - colorama==0.4.6 ; sys_platform == 'win32'
-          - coverage==7.10.6
+          - coverage==7.10.7
           - doc8==1.1.2 ; python_full_version < '3.10'
           - doc8==2.0.0 ; python_full_version >= '3.10'
           - docutils==0.21.2
@@ -57,7 +57,7 @@ repos:
           - pyright==1.1.405
           - pytest==8.4.2
           - pytest-cov==7.0.0
-          - pytest-mock==3.15.0
+          - pytest-mock==3.15.1
           - requests==2.32.5
           - requests-mock==1.12.1
           - restructuredtext-lint==1.4.0
@@ -76,7 +76,7 @@ repos:
           - sphinxcontrib-serializinghtml==2.0.0
           - stevedore==5.5.0
           - tomli==2.2.1 ; python_full_version <= '3.11'
-          - types-docutils==0.22.0.20250914
+          - types-docutils==0.22.0.20250919
           - types-requests==2.32.4.20250913
           - typing-extensions==4.15.0
           - urllib3==2.5.0
