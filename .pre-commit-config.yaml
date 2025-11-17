@@ -36,7 +36,7 @@ repos:
           - alabaster==0.7.16 ; python_full_version < '3.10'
           - alabaster==1.0.0 ; python_full_version >= '3.10'
           - babel==2.17.0
-          - certifi==2025.10.5
+          - certifi==2025.11.12
           - charset-normalizer==3.4.4
           - colorama==0.4.6 ; sys_platform == 'win32'
           - coverage==7.10.7 ; python_full_version < '3.10'
@@ -58,7 +58,7 @@ repos:
           - pygments==2.19.2
           - pyright==1.1.407
           - pytest==8.4.2 ; python_full_version < '3.10'
-          - pytest==9.0.0 ; python_full_version >= '3.10'
+          - pytest==9.0.1 ; python_full_version >= '3.10'
           - pytest-cov==7.0.0
           - pytest-mock==3.15.1
           - requests==2.32.5
@@ -79,7 +79,7 @@ repos:
           - sphinxcontrib-serializinghtml==2.0.0
           - stevedore==5.5.0
           - tomli==2.3.0 ; python_full_version <= '3.11'
-          - types-docutils==0.22.2.20251006
+          - types-docutils==0.22.3.20251115
           - types-requests==2.32.4.20250913
           - typing-extensions==4.15.0
           - urllib3==2.5.0
