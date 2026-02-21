@@ -53,7 +53,7 @@ jobs:
           | python -c "import tomllib,sys; print('pyright-version='+next(e['version'] for e in tomllib.loads(sys.stdin.read())['packages'] if e['name'] == 'pyright' ))"
           >> $GITHUB_OUTPUT
 
-      - uses: jakebailey/pyright-action@v2
+      - uses: jakebailey/pyright-action@v3
         with:
           version: ${{ steps.pre-commit-pyright-version.outputs.pyright-version }}
 
