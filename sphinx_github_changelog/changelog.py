@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from typing import Any
 
@@ -161,6 +162,21 @@ def get_release_title(title: str | None, tag: str):
     return title if tag in title else f"{tag}: {title}"
 
 
+def transform_private_image_urls(html: str) -> str:
+    """Convert signed private image URLs to permanent user-attachments URLs.
+
+    When GitHub's GraphQL API returns release descriptions, images uploaded via
+    drag-and-drop are returned as signed private-user-images.githubusercontent.com
+    URLs with 5-minute JWT expiration. This converts them to permanent
+    github.com/user-attachments/assets/ URLs.
+    """
+    pattern = (
+        r"https://private-user-images\.githubusercontent\.com/"
+        r"\d+/(\d+)-([a-f0-9-]{36})\.([a-z]+)\?[^\"'>\s]+"
+    )
+    return re.sub(pattern, r"https://github.com/user-attachments/assets/\2", html)
+
+
 def node_for_release(
     release: dict[str, Any], pypi_name: str | None = None
 ) -> nodes.Node | None:
@@ -193,7 +209,8 @@ def node_for_release(
     section += subtitle_paragraph
 
     # Body
-    section += nodes.raw(text=release["descriptionHTML"], format="html")
+    html_content = transform_private_image_urls(release["descriptionHTML"])
+    section += nodes.raw(text=html_content, format="html")
     return section
 
 

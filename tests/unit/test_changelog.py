@@ -319,3 +319,53 @@ def test_get_token_from_env(monkeypatch):
     assert credentials.get_token_from_env() == "testtoken"
     monkeypatch.delenv("SPHINX_GITHUB_CHANGELOG_TOKEN", raising=False)
     assert credentials.get_token_from_env() is None
+
+
+class TestTransformPrivateImageUrls:
+    """Tests for transform_private_image_urls function."""
+
+    def test_transforms_private_image_url(self):
+        html = (
+            '<img src="https://private-user-images.githubusercontent.com/'
+            "123/456789-abcd1234-5678-90ab-cdef-123456789012.png"
+            '?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&amp;exp=1234567890">'
+        )
+        result = changelog.transform_private_image_urls(html)
+        assert result == (
+            '<img src="https://github.com/user-attachments/assets/'
+            'abcd1234-5678-90ab-cdef-123456789012">'
+        )
+
+    def test_transforms_multiple_urls(self):
+        html = (
+            '<img src="https://private-user-images.githubusercontent.com/'
+            '123/111-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.png?jwt=token1">'
+            '<img src="https://private-user-images.githubusercontent.com/'
+            '456/222-11111111-2222-3333-4444-555555555555.jpg?jwt=token2">'
+        )
+        result = changelog.transform_private_image_urls(html)
+        assert (
+            "https://github.com/user-attachments/assets/"
+            "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+        ) in result
+        assert (
+            "https://github.com/user-attachments/assets/"
+            "11111111-2222-3333-4444-555555555555"
+        ) in result
+        assert "private-user-images" not in result
+
+    def test_preserves_other_urls(self):
+        html = (
+            '<img src="https://example.com/image.png">'
+            '<a href="https://github.com/repo">link</a>'
+        )
+        result = changelog.transform_private_image_urls(html)
+        assert result == html
+
+    def test_handles_empty_string(self):
+        assert changelog.transform_private_image_urls("") == ""
+
+    def test_handles_html_without_images(self):
+        html = "<p>No images here</p>"
+        result = changelog.transform_private_image_urls(html)
+        assert result == html
