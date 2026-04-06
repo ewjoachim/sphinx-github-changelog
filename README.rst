@@ -169,6 +169,9 @@ Extension options (``conf.py``)
 -------------------------------
 
 - ``sphinx_github_changelog_token``: GitHub API token, if needed.
+- ``sphinx_github_changelog_convert_alerts`` (optional): Convert GitHub markdown
+  alerts to Sphinx admonitions. Default: ``True``. See `GitHub Markdown Alerts`_
+  below.
 
 Two options are accepted for backwards compatibility, but are likely detected
 automatically from the ``:github:`` parameter to the directive:
@@ -177,6 +180,33 @@ automatically from the ``:github:`` parameter to the directive:
 - ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
 
 .. _ReadTheDocs: https://readthedocs.org/
+
+.. _GitHub Markdown Alerts:
+
+GitHub Markdown Alerts
+----------------------
+
+GitHub markdown alerts (``[!NOTE]``, ``[!TIP]``, ``[!IMPORTANT]``,
+``[!WARNING]``, ``[!CAUTION]``) in release descriptions are automatically
+converted to native Sphinx admonitions. This ensures:
+
+- Proper styling across all output formats (HTML, PDF, etc.)
+- Automatic theme integration (light/dark mode support)
+- No need for custom CSS to style alerts
+
+The following alert types are supported:
+
+- ``[!NOTE]`` → Sphinx ``note`` admonition
+- ``[!TIP]`` → Sphinx ``tip`` admonition
+- ``[!IMPORTANT]`` → Sphinx ``important`` admonition
+- ``[!WARNING]`` → Sphinx ``warning`` admonition
+- ``[!CAUTION]`` → Sphinx ``caution`` admonition
+
+To disable this feature and keep the raw HTML:
+
+.. code-block:: python
+
+    sphinx_github_changelog_convert_alerts = False
 
 .. _directive:
 
