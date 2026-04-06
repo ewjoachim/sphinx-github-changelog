@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup, NavigableString, Tag
 from docutils import nodes
-
-if TYPE_CHECKING:
-    from bs4.element import Tag
 
 # Mapping from GitHub alert classes to Sphinx admonition types
 ALERT_TYPE_MAP = {
@@ -38,7 +33,7 @@ def convert_alerts_to_admonitions(html: str) -> list[nodes.Node]:
                 result_nodes.append(nodes.raw(text=str(element), format="html"))
             continue
 
-        if not hasattr(element, "get"):
+        if not isinstance(element, Tag):
             continue
 
         classes = element.get("class", [])
@@ -74,6 +69,8 @@ def create_admonition_node(element: Tag, admonition_type: str) -> nodes.admoniti
     # Extract content (skip the .markdown-alert-title paragraph)
     for child in element.children:
         if isinstance(child, NavigableString):
+            continue
+        if not isinstance(child, Tag):
             continue
         classes = child.get("class", [])
         if "markdown-alert-title" in classes:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pytest
 from docutils import nodes
 
 from sphinx_github_changelog.html_processing import (
@@ -124,7 +123,9 @@ class TestCreateAdmonitionNode:
     def test_title_is_capitalized(self):
         from bs4 import BeautifulSoup
 
-        html = '<div class="markdown-alert markdown-alert-important"><p>Content</p></div>'
+        html = (
+            '<div class="markdown-alert markdown-alert-important"><p>Content</p></div>'
+        )
         soup = BeautifulSoup(html, "html.parser")
         element = soup.find("div")
         admonition = create_admonition_node(element, "important")
