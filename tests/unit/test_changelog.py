@@ -369,3 +369,51 @@ class TestTransformPrivateImageUrls:
         html = "<p>No images here</p>"
         result = changelog.transform_private_image_urls(html)
         assert result == html
+
+
+class TestNodeForReleaseAlertConversion:
+    """Tests for alert conversion in node_for_release function."""
+
+    ALERT_HTML = """
+<p>Regular content</p>
+<div class="markdown-alert markdown-alert-note">
+  <p class="markdown-alert-title">Note</p>
+  <p>This is a note.</p>
+</div>
+"""
+
+    def test_converts_alerts_by_default(self, release_dict):
+        release_dict["descriptionHTML"] = self.ALERT_HTML
+        result = changelog.node_for_release(release=release_dict, pypi_name=None)
+        result_str = node_to_string(result)
+        # Should have admonition node with "note" class
+        assert '<admonition classes="note">' in result_str
+        assert "<title>Note</title>" in result_str
+
+    def test_converts_alerts_when_enabled(self, release_dict):
+        release_dict["descriptionHTML"] = self.ALERT_HTML
+        result = changelog.node_for_release(
+            release=release_dict, pypi_name=None, convert_alerts=True
+        )
+        result_str = node_to_string(result)
+        assert '<admonition classes="note">' in result_str
+
+    def test_preserves_raw_html_when_disabled(self, release_dict):
+        release_dict["descriptionHTML"] = self.ALERT_HTML
+        result = changelog.node_for_release(
+            release=release_dict, pypi_name=None, convert_alerts=False
+        )
+        # Check that the result contains a raw node with the alert HTML
+        from docutils import nodes
+
+        raw_nodes = [n for n in result.children if isinstance(n, nodes.raw)]
+        assert len(raw_nodes) == 1  # Single raw node containing all HTML
+        raw_content = str(raw_nodes[0])
+        assert "markdown-alert" in raw_content
+
+    def test_preserves_non_alert_content(self, release_dict):
+        release_dict["descriptionHTML"] = self.ALERT_HTML
+        result = changelog.node_for_release(release=release_dict, pypi_name=None)
+        result_str = node_to_string(result)
+        # Regular content should still be present
+        assert "Regular content" in result_str

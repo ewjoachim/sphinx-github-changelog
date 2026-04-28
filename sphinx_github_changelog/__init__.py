@@ -29,6 +29,12 @@ def setup(app):
         default=os.environ.get(graphql_url_name.upper()),
         rebuild="html",
     )
+    app.add_config_value(
+        name="sphinx_github_changelog_convert_alerts",
+        default=True,
+        rebuild="html",
+        types=[bool],
+    )
 
     app.add_directive("changelog", changelog.ChangelogDirective)
 

@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["docutils", "requests", "Sphinx"]
+dependencies = ["beautifulsoup4", "docutils", "requests", "Sphinx"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
@@ -47,7 +47,7 @@ dev = [
     "pyright",
 ]
 docs = ["sphinx-rtd-theme"]
-types = ["types-requests", "types-docutils"]
+types = ["types-beautifulsoup4", "types-requests", "types-docutils"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
