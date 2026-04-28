@@ -48,7 +48,7 @@ def get_token_from_git_credential(host: str = "github.com") -> str | None:
             text=True,
         )
         for ln in resp.splitlines():
-            key, eq, value = ln.partition("=")
+            key, _eq, value = ln.partition("=")
             if key == "password" and is_github_token(value):
                 return value
     return None
