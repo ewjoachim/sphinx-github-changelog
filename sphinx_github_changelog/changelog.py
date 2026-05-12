@@ -13,7 +13,7 @@ from docutils import nodes
 from docutils.parsers.rst import Directive, directives  # type: ignore
 
 from . import credentials, urls
-from .html_processing import convert_alerts_to_admonitions
+from .markdown_processing import convert_markdown_to_nodes
 
 
 class ChangelogError(Exception):
@@ -216,13 +216,17 @@ def node_for_release(
     subtitle_paragraph += subtitle
     section += subtitle_paragraph
 
-    # Body
-    html_content = transform_private_image_urls(release["descriptionHTML"])
+    # Body - parse raw markdown with markdown-it-py
+    markdown_content = transform_private_image_urls(release["description"] or "")
     if convert_alerts:
-        content_nodes = convert_alerts_to_admonitions(html_content)
+        content_nodes = convert_markdown_to_nodes(markdown_content)
         for content_node in content_nodes:
             section += content_node
     else:
+        # When alerts conversion is disabled, still render markdown to HTML
+        from .markdown_processing import render_markdown_to_html
+
+        html_content = render_markdown_to_html(markdown_content)
         section += nodes.raw(text=html_content, format="html")
     return section
 
@@ -237,7 +241,7 @@ def extract_releases(
         repository(owner: "{owner}", name: "{repo}") {{
             releases(orderBy: {{field: CREATED_AT, direction: DESC}}, first:100) {{
                 nodes {{
-                    name, descriptionHTML, url, tagName, publishedAt, isDraft
+                    name, description, url, tagName, publishedAt, isDraft
                 }}
             }}
         }}

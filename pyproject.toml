@@ -30,7 +30,14 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["beautifulsoup4", "docutils", "requests", "Sphinx"]
+dependencies = [
+    "beautifulsoup4",
+    "docutils",
+    "markdown-it-py>=3.0.0",
+    "mdit-py-plugins>=0.4.2",
+    "requests",
+    "Sphinx",
+]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
