@@ -13,7 +13,7 @@ name = "sphinx-github-changelog"
 dynamic = ["version"]
 description = "Build a sphinx changelog from GitHub Releases"
 authors = [{ name = "Joachim Jablon", email = "ewjoachim@gmail.com" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.rst"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -24,7 +24,6 @@ classifiers = [
     "Framework :: Sphinx",
     "Framework :: Sphinx :: Extension",
     "Typing :: Typed",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -34,7 +33,7 @@ dependencies = [
     "beautifulsoup4",
     "docutils",
     "markdown-it-py>=3.0.0",
-    "mdit-py-plugins>=0.4.2",
+    "mdit-py-plugins>=0.6.0",
     "requests",
     "Sphinx",
 ]
