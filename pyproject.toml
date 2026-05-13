@@ -29,14 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = [
-    "beautifulsoup4",
-    "docutils",
-    "markdown-it-py>=3.0.0",
-    "mdit-py-plugins>=0.6.0",
-    "requests",
-    "Sphinx",
-]
+dependencies = ["docutils", "myst-parser>=4.0.1", "requests", "Sphinx"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
@@ -53,7 +46,7 @@ dev = [
     "pyright",
 ]
 docs = ["sphinx-rtd-theme"]
-types = ["types-beautifulsoup4", "types-requests", "types-docutils"]
+types = ["types-requests", "types-docutils"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
@@ -91,7 +84,8 @@ ignore-path = "docs/_build,.venv"
 [tool.pytest.ini_options]
 addopts = ["-vv", "--strict-markers", "-rfE", "-m not benchmark"]
 testpaths = ["tests/unit", "tests/acceptance"]
-filterwarnings = """
+filterwarnings = '''
     error
-"""
+    ignore:nodes.Node.traverse\(\) is obsoleted by Node.findall\(\):PendingDeprecationWarning
+'''
 pythonpath = ["."]

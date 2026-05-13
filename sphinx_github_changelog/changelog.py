@@ -6,14 +6,16 @@ from typing import Any
 
 import requests
 from docutils import nodes
+from docutils.frontend import get_default_settings
 
 # types-docutils (from typeshed) is usable but incomplete.
 # docutils-stubs is more complete but
 # https://github.com/tk0miya/docutils-stubs/issues/33
-from docutils.parsers.rst import Directive, directives  # type: ignore
+from docutils.parsers.rst import Directive, directives
+from docutils.utils import new_document
+from myst_parser.parsers.docutils_ import Parser
 
 from . import credentials, urls
-from .markdown_processing import convert_markdown_to_nodes
 
 
 class ChangelogError(Exception):
@@ -218,16 +220,9 @@ def node_for_release(
 
     # Body - parse raw markdown with markdown-it-py
     markdown_content = transform_private_image_urls(release["description"] or "")
-    if convert_alerts:
-        content_nodes = convert_markdown_to_nodes(markdown_content)
-        for content_node in content_nodes:
-            section += content_node
-    else:
-        # When alerts conversion is disabled, still render markdown to HTML
-        from .markdown_processing import render_markdown_to_html
 
-        html_content = render_markdown_to_html(markdown_content)
-        section += nodes.raw(text=html_content, format="html")
+    changelog_nodes = convert_markdown_to_nodes(markdown_content)
+    section += changelog_nodes
     return section
 
 
@@ -284,3 +279,29 @@ def github_call(url, token, query):
         raise ChangelogError(
             "Could not retrieve changelog from github: " + str(exc)
         ) from exc
+
+
+def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
+    """
+    Convert markdown to docutils nodes
+    """
+    if not markdown or not markdown.strip():
+        return []
+    parser = Parser()
+    settings = get_default_settings(Parser)
+
+    settings.myst_gfm_only = True
+
+    settings.myst_enable_extensions = [
+        "strikethrough",
+        "tasklist",
+        "linkify",
+        "alert",
+    ]
+    settings.myst_heading_anchors = 3
+
+    document = new_document("changelog_text", settings=settings)
+
+    parser.parse(markdown, document)
+
+    return document.children
