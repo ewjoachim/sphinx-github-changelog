@@ -18,7 +18,7 @@ def rootdir():
 def release_dict():
     return {
         "name": "A new hope",
-        "descriptionHTML": "<p>yay</p>",
+        "description": "yay",
         "url": "https://example.com",
         "tagName": "1.0.0",
         "publishedAt": "2000-01-01",
