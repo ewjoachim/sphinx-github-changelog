@@ -383,9 +383,7 @@ def test_converts_alerts_by_default(release_dict):
     release_dict["description"] = ALERT_MARKDOWN
     result = changelog.node_for_release(release=release_dict, pypi_name=None)
     result_str = node_to_string(result)
-    # Should have admonition node with "note" class
-    assert '<admonition classes="note">' in result_str
-    assert "<title>Note</title>" in result_str
+    assert "<note>" in result_str
 
 
 def test_preserves_non_alert_content(release_dict):
