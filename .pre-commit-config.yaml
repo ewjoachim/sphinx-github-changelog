@@ -55,7 +55,7 @@ repos:
           - pluggy==1.6.0
           - pygments==2.19.2
           - pyright==1.1.407
-          - pytest==9.0.1
+          - pytest==9.0.3
           - pytest-cov==7.0.0
           - pytest-mock==3.15.1
           - pyyaml==6.0.3
