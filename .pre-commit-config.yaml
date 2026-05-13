@@ -59,7 +59,7 @@ repos:
           - pytest-cov==7.0.0
           - pytest-mock==3.15.1
           - pyyaml==6.0.3
-          - requests==2.32.5
+          - requests==2.33.0
           - requests-mock==1.12.1
           - restructuredtext-lint==2.0.2
           - roman-numerals-py==3.1.0
