@@ -6,13 +6,13 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
 
 jobs:
   tests:
     strategy:
       matrix:
-        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python_version: ["3.11", "3.12", "3.13", "3.14"]
 
     name: "py${{ matrix.python_version }}"
     runs-on: ubuntu-latest
@@ -40,7 +40,6 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
-          python-version: "3.13"
           activate-environment: true
 
       - name: Install dependencies
