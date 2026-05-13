@@ -388,31 +388,6 @@ def test_converts_alerts_by_default(release_dict):
     assert "<title>Note</title>" in result_str
 
 
-def test_converts_alerts_when_enabled(release_dict):
-    release_dict["description"] = ALERT_MARKDOWN
-    result = changelog.node_for_release(
-        release=release_dict, pypi_name=None, convert_alerts=True
-    )
-    result_str = node_to_string(result)
-    assert '<admonition classes="note">' in result_str
-
-
-def test_preserves_raw_html_when_disabled(release_dict):
-    release_dict["description"] = ALERT_MARKDOWN
-    result = changelog.node_for_release(
-        release=release_dict, pypi_name=None, convert_alerts=False
-    )
-    # Check that the result contains a raw node with the alert HTML
-    from docutils import nodes
-
-    raw_nodes = [n for n in result.children if isinstance(n, nodes.raw)]
-    assert len(raw_nodes) == 1  # Single raw node containing all HTML
-    raw_content = str(raw_nodes[0])
-    # When convert_alerts=False, alerts are still rendered to HTML
-    # by markdown-it but not converted to admonitions
-    assert "markdown-alert" in raw_content
-
-
 def test_preserves_non_alert_content(release_dict):
     release_dict["description"] = ALERT_MARKDOWN
     result = changelog.node_for_release(release=release_dict, pypi_name=None)

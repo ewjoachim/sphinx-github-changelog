@@ -44,7 +44,6 @@ class ChangelogDirective(Directive):
                 options=self.options,
                 root_url=config.sphinx_github_changelog_root_repo,
                 graphql_url=config.sphinx_github_changelog_graphql_url,
-                convert_alerts=config.sphinx_github_changelog_convert_alerts,
             )
         except ChangelogError as exc:
             raise self.error(str(exc))
@@ -55,7 +54,6 @@ def compute_changelog(
     options: dict[str, str],
     root_url: str | None = None,
     graphql_url: str | None = None,
-    convert_alerts: bool = True,
 ) -> list[nodes.Node]:
     if options.get("github"):
         # If a github URL is explicitly provided, validate that it is in
@@ -96,10 +94,7 @@ def compute_changelog(
     pypi_name = extract_pypi_package_name(url=options.get("pypi"))
 
     result_nodes = (
-        node_for_release(
-            release=release, pypi_name=pypi_name, convert_alerts=convert_alerts
-        )
-        for release in releases
+        node_for_release(release=release, pypi_name=pypi_name) for release in releases
     )
 
     return [n for n in result_nodes if n is not None]
@@ -188,7 +183,6 @@ def transform_private_image_urls(html: str) -> str:
 def node_for_release(
     release: dict[str, Any],
     pypi_name: str | None = None,
-    convert_alerts: bool = True,
 ) -> nodes.Node | None:
     if release["isDraft"]:
         return None  # For now, draft releases are excluded
@@ -288,7 +282,7 @@ def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
     if not markdown or not markdown.strip():
         return []
     parser = Parser()
-    settings = get_default_settings(Parser)
+    settings = get_default_settings(parser)
 
     settings.myst_gfm_only = True
 
