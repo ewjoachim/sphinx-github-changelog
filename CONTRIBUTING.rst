@@ -13,13 +13,14 @@ There are multiple ways of interacting with the project.
 I want to run the code quality tools
 ------------------------------------
 
-```console
-# Run once:
-$ prek run --all-files
+.. code-block:: console
 
-# Install pre-commit hooks
-$ prek install
-```
+    # Run once:
+    $ prek run --all-files
+
+    # Install pre-commit hooks
+    $ prek install
+
 
 I want a venv to play locally
 -----------------------------
