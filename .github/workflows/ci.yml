@@ -8,6 +8,9 @@ on:
     tags:
       - "*"
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     strategy:
