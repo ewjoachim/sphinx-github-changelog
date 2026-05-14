@@ -29,7 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["docutils", "myst-parser>=5.1.0", "requests", "Sphinx"]
+dependencies = ["docutils", "myst-parser>=5.1.0", "httpx", "Sphinx"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
@@ -37,14 +37,7 @@ Repository = "https://github.com/ewjoachim/sphinx-github-changelog"
 Documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
 [dependency-groups]
-dev = [
-    "doc8",
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "requests-mock",
-    "pyright",
-]
+dev = ["doc8", "pytest", "pytest-cov", "pytest-mock", "pytest-httpx", "pyright"]
 docs = ["sphinx-rtd-theme"]
 types = ["types-requests", "types-docutils"]
 
