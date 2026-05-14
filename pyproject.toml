@@ -37,7 +37,15 @@ Repository = "https://github.com/ewjoachim/sphinx-github-changelog"
 Documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
 [dependency-groups]
-dev = ["doc8", "pytest", "pytest-cov", "pytest-mock", "pytest-httpx", "pyright"]
+dev = [
+    # # Remove doc8 while they force old docutils.
+    # "doc8",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-httpx",
+    "pyright",
+]
 docs = ["sphinx-rtd-theme"]
 types = ["types-requests", "types-docutils"]
 

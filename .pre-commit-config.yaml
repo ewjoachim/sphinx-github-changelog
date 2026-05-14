@@ -36,10 +36,11 @@ repos:
         args: [--fix, --unsafe-fixes, --show-fixes]
       - id: ruff-format
 
-  - repo: https://github.com/PyCQA/doc8
-    rev: 0.11.2
-    hooks:
-      - id: doc8
+  # Remove doc8 while they force old docutils.
+  # - repo: https://github.com/PyCQA/doc8
+  #   rev: 0.11.2
+  #   hooks:
+  #     - id: doc8
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
