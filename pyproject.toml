@@ -44,7 +44,7 @@ dev = [
     "pytest-cov",
     "pytest-mock",
     "pytest-httpx",
-    "pyright",
+    "basedpyright",
 ]
 docs = ["sphinx-rtd-theme"]
 types = ["types-requests", "types-docutils"]
@@ -55,8 +55,9 @@ exclude-newer = "5 days"
 # TODO: remove after 2026-05-21
 exclude-newer-package = { myst-parser = false, mdit-py-plugins = false }
 
-[tool.pyright]
+[tool.basedpyright]
 exclude = ["tests", ".venv", "scripts", ".github"]
+typeCheckingMode = "standard"
 
 [tool.ruff]
 target-version = "py39"

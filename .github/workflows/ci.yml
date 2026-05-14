@@ -12,6 +12,20 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run prek
+        uses: j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3 # v2.0.3
+
+      - name: Commits back to branch if necessary
+        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
+
   tests:
     strategy:
       matrix:
@@ -37,34 +51,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  static-typing:
-    name: Run Pyright
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-        with:
-          activate-environment: true
-          enable-cache: false
-
-      - name: Install dependencies
-        run: uv sync --group=types
-
-      - name: Extract pyright version from pre-commit
-        id: pre-commit-pyright-version
-        run: >
-          uv export --format pylock.toml
-          | python -c "import tomllib,sys; print('pyright-version='+next(e['version'] for e in tomllib.loads(sys.stdin.read())['packages'] if e['name'] == 'pyright' ))"
-          >> $GITHUB_OUTPUT
-
-      - uses: jakebailey/pyright-action@8ec14b5cfe41f26e5f41686a31eb6012758217ef # v3.0.2
-        with:
-          version: ${{ steps.pre-commit-pyright-version.outputs.pyright-version }}
-
   publish:
     name: Publish package to PyPI
     if: github.event_name == 'push' && github.ref_type == 'tag'
@@ -73,7 +59,7 @@ jobs:
       id-token: write
     needs:
       - tests
-      - static-typing
+      - lint
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
