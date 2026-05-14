@@ -50,6 +50,9 @@ types = ["types-requests", "types-docutils"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
+exclude-newer = "5 days"
+# TODO: remove after 2026-05-21
+exclude-newer-package = { myst-parser = false, mdit-py-plugins = false }
 
 [tool.pyright]
 exclude = ["tests", ".venv", "scripts", ".github"]
