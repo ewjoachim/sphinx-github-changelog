@@ -103,3 +103,14 @@ filterwarnings = '''
     ignore:nodes.Node.traverse\(\) is obsoleted by Node.findall\(\):PendingDeprecationWarning
 '''
 pythonpath = ["."]
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "raise NotImplementedError",
+    "coverage: exclude",
+    "if TYPE_CHECKING:",
+    "[ ]+\\.\\.\\.$",
+]
