@@ -30,7 +30,7 @@ def is_github_token(token: str) -> bool:
     As of 2025-05-08 the prefixes are `ghp_`, `gho_`, `ghu_`, and `ghs_`. We
     use a generic check for `gh?_` to allow for future prefixes.
     """
-    return token.startswith("gh") and token[3] == "_"
+    return token.startswith("gh") and len(token) > 4 and token[3] == "_"
 
 
 def get_token_from_git_credential(host: str = "github.com") -> str | None:

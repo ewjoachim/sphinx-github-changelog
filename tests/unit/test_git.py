@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import shutil
 import subprocess
 from pathlib import Path
 
@@ -92,14 +91,26 @@ def test_git_credential_unavailable(credential_file: Path):
     assert get_token_from_git_credential("github.com") is None
 
 
-@pytest.mark.skipif(
-    shutil.which("gh") is None,
-    reason="GitHub CLI is not installed or not in PATH",
+@pytest.mark.parametrize(
+    "token, expected",
+    [
+        ("gha_123", True),
+        ("gh_123", False),
+        ("gha123", False),
+        ("", False),
+    ],
 )
-def test_get_token_from_gh():
+def test_is_github_token(token, expected):
+    assert is_github_token(token) == expected
+
+
+def test_get_token_from_gh(fake_process):
     """Test for getting a GitHub token from the gh CLI.
 
     Because the test is disabled if the gh CLI is not available, we assume that
     the CLI is already logged into GitHub.
     """
-    assert is_github_token(get_token_from_gh_cli("github.com"))
+    fake_process.register(
+        ["gh", "auth", "token", "--hostname=github.com"], stdout="ghx_123"
+    )
+    assert get_token_from_gh_cli("github.com") == "ghx_123"

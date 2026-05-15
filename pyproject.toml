@@ -45,6 +45,7 @@ dev = [
     "pytest-mock",
     "pytest-httpx",
     "basedpyright",
+    "pytest-subprocess>=1.6.0",
 ]
 docs = ["sphinx-rtd-theme"]
 types = ["types-requests", "types-docutils"]
