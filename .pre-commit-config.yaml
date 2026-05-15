@@ -41,6 +41,7 @@ repos:
     rev: 1.39.4
     hooks:
       - id: basedpyright
+        args: [--verbose]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
