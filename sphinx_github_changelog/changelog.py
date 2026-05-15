@@ -286,12 +286,6 @@ def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
 
     settings.myst_gfm_only = True
 
-    settings.myst_enable_extensions = [
-        "strikethrough",
-        "tasklist",
-        "linkify",
-        "alert",
-    ]
     settings.myst_heading_anchors = 3
 
     document = new_document("changelog_text", settings=settings)
