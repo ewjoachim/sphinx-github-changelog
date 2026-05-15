@@ -87,7 +87,16 @@ max-line-length = 88
 ignore-path = "docs/_build,.venv"
 
 [tool.pytest.ini_options]
-addopts = ["-vv", "--strict-markers", "-rfE", "-m not benchmark"]
+addopts = [
+    "-vv",
+    "--strict-markers",
+    "-rfE",
+    "-m not benchmark",
+    "--cov=sphinx_github_changelog",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-branch",
+]
 testpaths = ["tests/unit", "tests/acceptance"]
 filterwarnings = '''
     error
