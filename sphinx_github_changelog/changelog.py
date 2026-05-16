@@ -4,7 +4,7 @@ import re
 from collections.abc import Iterable
 from typing import Any
 
-import requests
+import httpx
 from docutils import nodes
 from docutils.frontend import get_default_settings
 
@@ -256,23 +256,23 @@ def extract_releases(
 
 def github_call(url, token, query):
     try:
-        response = requests.post(
+        response = httpx.post(
             url, json=query, headers={"Authorization": f"token {token}"}
-        )
-        response.raise_for_status()
-        # Let's not imagine if GitHub responds non-json...
-        return response.json()
+        ).raise_for_status()
 
-    except requests.HTTPError as exc:
+    except httpx.HTTPStatusError as exc:
         # GraphQL always responds 200
         raise ChangelogError(
             f"Unexpected GitHub API error status code: {exc.response.status_code}\n"
             f"{exc.response.text}"
         ) from exc
-    except requests.RequestException as exc:
+    except httpx.HTTPError as exc:
         raise ChangelogError(
             "Could not retrieve changelog from github: " + str(exc)
         ) from exc
+
+    # Let's not imagine if GitHub responds non-json...
+    return response.json()
 
 
 def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
@@ -286,12 +286,6 @@ def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
 
     settings.myst_gfm_only = True
 
-    settings.myst_enable_extensions = [
-        "strikethrough",
-        "tasklist",
-        "linkify",
-        "alert",
-    ]
     settings.myst_heading_anchors = 3
 
     document = new_document("changelog_text", settings=settings)

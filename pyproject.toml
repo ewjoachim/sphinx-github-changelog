@@ -29,7 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["docutils", "myst-parser>=5.1.0", "requests", "Sphinx"]
+dependencies = ["docutils", "myst-parser>=5.1.0", "httpx", "Sphinx"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
@@ -38,21 +38,27 @@ Documentation = "https://sphinx-github-changelog.readthedocs.io/en/latest/"
 
 [dependency-groups]
 dev = [
-    "doc8",
+    # # Remove doc8 while they force old docutils.
+    # "doc8",
     "pytest",
     "pytest-cov",
     "pytest-mock",
-    "requests-mock",
-    "pyright",
+    "pytest-httpx",
+    "basedpyright",
+    "pytest-subprocess>=1.6.0",
 ]
 docs = ["sphinx-rtd-theme"]
 types = ["types-requests", "types-docutils"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
+exclude-newer = "5 days"
+# TODO: remove after 2026-05-21
+exclude-newer-package = { myst-parser = false, mdit-py-plugins = false }
 
-[tool.pyright]
+[tool.basedpyright]
 exclude = ["tests", ".venv", "scripts", ".github"]
+typeCheckingMode = "standard"
 
 [tool.ruff]
 target-version = "py39"
@@ -82,10 +88,30 @@ max-line-length = 88
 ignore-path = "docs/_build,.venv"
 
 [tool.pytest.ini_options]
-addopts = ["-vv", "--strict-markers", "-rfE", "-m not benchmark"]
+addopts = [
+    "-vv",
+    "--strict-markers",
+    "-rfE",
+    "-m not benchmark",
+    "--cov=sphinx_github_changelog",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-branch",
+]
 testpaths = ["tests/unit", "tests/acceptance"]
 filterwarnings = '''
     error
     ignore:nodes.Node.traverse\(\) is obsoleted by Node.findall\(\):PendingDeprecationWarning
 '''
 pythonpath = ["."]
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "raise NotImplementedError",
+    "coverage: exclude",
+    "if TYPE_CHECKING:",
+    "[ ]+\\.\\.\\.$",
+]

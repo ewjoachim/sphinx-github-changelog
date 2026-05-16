@@ -3,8 +3,8 @@ from __future__ import annotations
 import re
 import xml.dom.minidom
 
+import httpx
 import pytest
-import requests
 
 from sphinx_github_changelog import changelog, credentials
 
@@ -131,7 +131,7 @@ def test_extract_github_repo_name(url):
 
 def test_extract_github_repo_name_error():
     with pytest.raises(
-        changelog.ChangelogError, match="^Changelog needs a Github releases URL"
+        changelog.ChangelogError, match=r"^Changelog needs a Github releases URL"
     ):
         changelog.extract_github_repo_name("https://example.com")
 
@@ -145,7 +145,7 @@ def test_extract_github_repo_name_error():
 )
 def test_extract_github_repo_different_root_url(url):
     with pytest.raises(
-        changelog.ChangelogError, match="^Changelog needs a Github releases URL"
+        changelog.ChangelogError, match=r"^Changelog needs a Github releases URL"
     ):
         changelog.extract_github_repo_name(url)
 
@@ -166,7 +166,7 @@ def test_extract_pypi_package_name(url):
 
 def test_extract_pypi_package_name_error():
     with pytest.raises(
-        changelog.ChangelogError, match="^Changelog needs a PyPI project URL"
+        changelog.ChangelogError, match=r"^Changelog needs a PyPI project URL"
     ):
         changelog.extract_pypi_package_name("https://example.com")
 
@@ -274,27 +274,29 @@ def test_extract_releases_format(github_payload, release_dict, mocker):
     assert str(exc_info.value) == error
 
 
-def test_github_call(requests_mock):
+def test_github_call(httpx_mock):
     url = "https://api.github.com/graphql"
     payload = {"message": "foo"}
-    requests_mock.post(url, json=payload)
+    httpx_mock.add_response(url=url, method="POST", json=payload)
     assert changelog.github_call(url=url, token="token", query="") == payload
 
 
-def test_github_call_http_error(requests_mock):
+def test_github_call_http_error(httpx_mock):
     url = "https://api.github.com/graphql"
-    requests_mock.post(url, status_code=400, json={"message": "foo"})
+    httpx_mock.add_response(
+        url=url, method="POST", status_code=400, json={"message": "foo"}
+    )
     with pytest.raises(changelog.ChangelogError) as exc_info:
         changelog.github_call(url=url, token="token", query="")
 
     assert str(exc_info.value) == (
-        "Unexpected GitHub API error status code: 400\n" """{"message": "foo"}"""
+        "Unexpected GitHub API error status code: 400\n" """{"message":"foo"}"""
     )
 
 
-def test_github_call_http_error_connection(requests_mock):
+def test_github_call_http_error_connection(httpx_mock):
     url = "https://api.github.com/graphql"
-    requests_mock.post(url, exc=requests.ConnectionError("bar"))
+    httpx_mock.add_exception(httpx.ConnectError("bar"), url=url, method="POST")
     with pytest.raises(changelog.ChangelogError) as exc_info:
         changelog.github_call(url=url, token="token", query="")
 

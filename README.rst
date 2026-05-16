@@ -22,7 +22,7 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :alt: Documentation
 
 .. image:: https://img.shields.io/endpoint?logo=codecov&logoColor=white&url=https://raw.githubusercontent.com/wiki/ewjoachim/sphinx-github-changelog/coverage-comment-badge.json
-    :target: https://github.com/marketplace/actions/coverage-comment
+    :target: https://htmlpreview.github.io/?https://github.com/ewjoachim/sphinx-github-changelog/blob/python-coverage-comment-action-data/htmlcov/index.html
     :alt: Coverage
 
 .. image:: https://img.shields.io/github/license/ewjoachim/sphinx-github-changelog?logo=open-source-initiative&logoColor=white
@@ -93,7 +93,7 @@ place people will look for it. As far as we've seen, people expect the changelog
 be:
 
 - in the repo, in ``CHANGELOG.rst``,
-- in the documentation.
+- in the built documentation.
 
 Having the changelog in ``CHANGELOG.rst`` causes a few problems:
 
@@ -161,7 +161,7 @@ have ``repo`` scope (classic tokens) or ``contents: read`` access (fine-grained
 tokens).
 
 Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` environment variable.
-You can also set the token as ``sphinx_github_changelog_token`` in ``conf.py``
+You can also set the token as ``sphinx_github_changelog_token`` in ``conf.py``,
 but you should never commit secrets such as this.
 
 
@@ -194,7 +194,7 @@ Attributes
 ~~~~~~~~~~
 
 - ``github`` (optional): URL to the releases page of the repository.
-  If not provided, auto‑detected from your git remote, as described above.
+  If not provided, auto-detected from your git remote, as described above.
 - ``changelog-url`` (optional): URL to the built version of your changelog.
   ``sphinx-github-changelog`` will display a link to your built changelog if the GitHub
   token is not provided (hopefully, this does not happen in your built documentation)
