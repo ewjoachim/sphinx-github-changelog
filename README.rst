@@ -21,7 +21,7 @@ Sphinx Github Changelog: Build a sphinx changelog from GitHub Releases
     :target: http://sphinx-github-changelog.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation
 
-.. image:: https://img.shields.io/endpoint?logo=codecov&logoColor=white&url=https://raw.githubusercontent.com/wiki/ewjoachim/sphinx-github-changelog/coverage-comment-badge.json
+.. image:: https://raw.githubusercontent.com/ewjoachim/sphinx-github-changelog/python-coverage-comment-action-data/badge.svg
     :target: https://htmlpreview.github.io/?https://github.com/ewjoachim/sphinx-github-changelog/blob/python-coverage-comment-action-data/htmlcov/index.html
     :alt: Coverage
 
