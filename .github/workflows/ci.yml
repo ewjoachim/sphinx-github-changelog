@@ -97,6 +97,7 @@ jobs:
     name: Publish package to PyPI
     if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       id-token: write
     needs:
