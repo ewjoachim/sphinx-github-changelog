@@ -141,10 +141,18 @@ Authentication
 The extension uses the GitHub GraphQL API to retrieve the changelog. This
 requires authentication using a GitHub API token.
 
-However if you use git over HTTPS, or the ``gh`` CLI, you probably already have a
-suitable token, which ``sphinx-github-changelog`` will automatically use.
+Tokens can be read from (in this order):
 
-In CI like GitHub Actions you can pass a token explicitly as an environment
+- ``sphinx_github_changelog_token`` in ``conf.py`` (please do **NOT** commit your secrets)
+- ``SPHINX_GITHUB_CHANGELOG_TOKEN`` environment variable
+- ``GITHUB_TOKEN`` environment variable
+- Your ``git`` configuration, using `git's credential system`_
+- The ``gh`` command, using `the auth token command`_
+
+.. _`git's credential system`: https://git-scm.com/docs/git-credential
+.. _`the auth token command`: https://cli.github.com/manual/gh_auth_token
+
+When using GitHub Actions, you can pass a token explicitly as an environment
 variable:
 
 .. code-block:: yaml
@@ -154,24 +162,28 @@ variable:
       env:
         SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ github.token }}
 
-In remaining cases you may need to create a personal access token. If the
-repository is public, the token doesn't need any special access (you can
-uncheck eveything). For private and internal repositories, the token must
-have ``repo`` scope (classic tokens) or ``contents: read`` access (fine-grained
-tokens).
+If you're not in one of the cases above (e.g. for ReadTheDocs, at least for the `time
+being`__), you'll need a personal access token. If the repository is public, the token
+doesn't need any special access (you can uncheck everything). For private and internal
+repositories, the token must have ``repo`` scope (classic tokens) or ``contents: read``
+access (fine-grained tokens).
 
-Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` environment variable.
-You can also set the token as ``sphinx_github_changelog_token`` in ``conf.py``,
-but you should never commit secrets such as this.
+.. __: https://github.com/readthedocs/readthedocs.org/issues/13053
+
+Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` (or ``GITHUB_TOKEN``)
+environment variable. You can also set the token as ``sphinx_github_changelog_token`` in
+``conf.py``, but you should never commit secrets such as this.
 
 
 Extension options (``conf.py``)
 -------------------------------
 
-- ``sphinx_github_changelog_token``: GitHub API token, if needed.
+- ``sphinx_github_changelog_token`` (optional): GitHub API token, if needed, see above
+  (please do **NOT** commit your secrets).
 
-Two options are accepted for backwards compatibility, but are likely detected
-automatically from the ``:github:`` parameter to the directive:
+The following options are useful in some cases, though most of the time, the
+corresponding values will be detected automatically from the ``:github:`` parameter
+passed to the directive:
 
 - ``sphinx_github_changelog_root_repo`` (optional): Root URL to the repository.
 - ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
