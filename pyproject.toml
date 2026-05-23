@@ -13,7 +13,7 @@ name = "sphinx-github-changelog"
 dynamic = ["version"]
 description = "Build a sphinx changelog from GitHub Releases"
 authors = [{ name = "Joachim Jablon", email = "ewjoachim@gmail.com" }]
-requires-python = ">=3.11"
+requires-python = ">= 3.11"
 readme = "README.rst"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -61,7 +61,6 @@ exclude = ["tests", ".venv", "scripts", ".github"]
 typeCheckingMode = "standard"
 
 [tool.ruff]
-target-version = "py39"
 extend-exclude = [".venv"]
 
 [tool.ruff.lint]
