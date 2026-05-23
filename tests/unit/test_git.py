@@ -7,12 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from sphinx_github_changelog import urls
-from sphinx_github_changelog.credentials import (
-    get_token_from_gh_cli,
-    get_token_from_git_credential,
-    is_github_token,
-)
+from sphinx_github_changelog import credentials, exceptions, urls
 
 
 def git(*args: str) -> str:
@@ -28,25 +23,24 @@ def add_remote(name: str, url: str):
 def test_get_git_remote_origin(temp_git: Path):
     """Test for getting the GitHub URL from the origin remote."""
     add_remote("origin", "https://github.com/ewjoachim/sphinx-github-changelog.git")
-    assert (
-        urls.get_default_github_url()
-        == "https://github.com/ewjoachim/sphinx-github-changelog"
-    )
+    candidates = urls.extract_remote_candidates()
+    params = urls.GitHubParams.from_remote_urls(candidates)
+    assert params.repo_url == "https://github.com/ewjoachim/sphinx-github-changelog"
 
 
 def test_get_git_remote_upstream(temp_git: Path):
-    """Test for getting the GitHub URL from the upsteam remote."""
+    """Test for getting the GitHub URL from the upstream remote."""
     add_remote("origin", "https://github.com/lordmauve/sphinx-github-changelog.git")
     add_remote("upstream", "https://github.com/ewjoachim/sphinx-github-changelog.git")
-    assert (
-        urls.get_default_github_url()
-        == "https://github.com/ewjoachim/sphinx-github-changelog"
-    )
+    candidates = urls.extract_remote_candidates()
+    params = urls.GitHubParams.from_remote_urls(candidates)
+    assert params.repo_url == "https://github.com/ewjoachim/sphinx-github-changelog"
 
 
 def test_get_git_no_remotes(temp_git: Path):
     """We can't get a GitHub URL if no remotes are set."""
-    assert urls.get_default_github_url() is None
+    with pytest.raises(exceptions.CouldNotExtract, match="No fetch URL found"):
+        urls.extract_remote_candidates()
 
 
 @pytest.fixture
@@ -75,20 +69,20 @@ def test_git_credential(credential_file: Path):
     """Test for getting a git token from the git credential helper."""
     credential_file.write_text("https://x:gho_1234abcd@github.com\n")
 
-    assert get_token_from_git_credential("github.com") == "gho_1234abcd"
+    assert credentials.get_token_from_git_credential("github.com") == "gho_1234abcd"
 
 
 def test_git_credential_password(credential_file: Path):
     """We do not attempt to use a password that does not look like a token."""
     credential_file.write_text("https://ewjoachim:hunter2@github.com\n")
 
-    assert get_token_from_git_credential("github.com") is None
+    assert credentials.get_token_from_git_credential("github.com") is None
 
 
 def test_git_credential_unavailable(credential_file: Path):
     """We return None if no git credentials are available."""
     credential_file.write_text("\n")
-    assert get_token_from_git_credential("github.com") is None
+    assert credentials.get_token_from_git_credential("github.com") is None
 
 
 @pytest.mark.parametrize(
@@ -101,7 +95,7 @@ def test_git_credential_unavailable(credential_file: Path):
     ],
 )
 def test_is_github_token(token, expected):
-    assert is_github_token(token) == expected
+    assert credentials.is_github_token(token) == expected
 
 
 def test_get_token_from_gh(fake_process):
@@ -113,4 +107,26 @@ def test_get_token_from_gh(fake_process):
     fake_process.register(
         ["gh", "auth", "token", "--hostname=github.com"], stdout="ghx_123"
     )
-    assert get_token_from_gh_cli("github.com") == "ghx_123"
+    assert credentials.get_token_from_gh_cli("github.com") == "ghx_123"
+
+
+def test_get_token_from_gh_empty(fake_process):
+    """gh auth token returning empty output should return None."""
+    fake_process.register(["gh", "auth", "token", "--hostname=github.com"], stdout="")
+    assert credentials.get_token_from_gh_cli("github.com") is None
+
+
+def test_get_github_token_from_env(monkeypatch):
+    """get_github_token should return a token from environment."""
+    monkeypatch.setenv("SPHINX_GITHUB_CHANGELOG_TOKEN", "gho_envtoken")
+    assert credentials.get_github_token("github.com") == "gho_envtoken"
+
+
+def test_get_github_token_not_found(monkeypatch, fake_process):
+    """get_github_token should raise CouldNotExtract when no token is found."""
+    monkeypatch.delenv("SPHINX_GITHUB_CHANGELOG_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    fake_process.register(["git", "credential", "fill"], stdout="")
+    fake_process.register(["gh", "auth", "token", "--hostname=github.com"], stdout="")
+    with pytest.raises(exceptions.CouldNotExtract, match="No GitHub token found"):
+        credentials.get_github_token("github.com")

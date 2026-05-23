@@ -3,17 +3,17 @@ from __future__ import annotations
 import re
 import xml.dom.minidom
 
-import httpx
 import pytest
 
-from sphinx_github_changelog import changelog, credentials
+from sphinx_github_changelog import changelog, credentials, exceptions
+from sphinx_github_changelog import config as config_module
 
 
 @pytest.fixture
-def extract_releases(mocker, release_dict):
+def extract_releases(mocker, release):
     return mocker.patch(
-        "sphinx_github_changelog.changelog.extract_releases",
-        return_value=[release_dict],
+        "sphinx_github_changelog.github_releases.extract_releases",
+        return_value=[release],
     )
 
 
@@ -44,28 +44,37 @@ def canonicalize(value):
 
 
 def test_compute_changelog_no_token(monkeypatch):
-    monkeypatch.setattr(credentials, "get_github_token", lambda host: None)
-    nodes = changelog.compute_changelog(
-        token=None, options={"github": "https://github.com/a/b/releases"}
+    def raise_no_token(host):
+        raise exceptions.CouldNotExtract("No GitHub token found")
+
+    monkeypatch.setattr(credentials, "get_github_token", raise_no_token)
+    options = config_module.ChangelogDirectiveOptions(
+        github="https://github.com/a/b/releases",
     )
+    config = config_module.ChangelogConfig()
+    nodes = changelog.compute_changelog(options=options, config=config)
     assert "Changelog was not built" in node_to_string(nodes[0])
 
 
 def test_compute_changelog_no_url(temp_git):
     with pytest.raises(
-        changelog.ChangelogError,
+        exceptions.ChangelogError,
         match=(
             r"^No :github: release URL provided and unable to determine it from "
             r"git remotes. "
         ),
     ):
-        changelog.compute_changelog(token=None, options={})
+        options = config_module.ChangelogDirectiveOptions()
+        config = config_module.ChangelogConfig()
+        changelog.compute_changelog(options=options, config=config)
 
 
 def test_compute_changelog_token(extract_releases):
-    nodes = changelog.compute_changelog(
-        token="token", options={"github": "https://github.com/a/b/releases"}
+    options = config_module.ChangelogDirectiveOptions(
+        github="https://github.com/a/b/releases",
     )
+    config = config_module.ChangelogConfig(token="token")
+    nodes = changelog.compute_changelog(options=options, config=config)
     assert "1.0.0: A new hope" in node_to_string(nodes[0])
 
 
@@ -123,41 +132,6 @@ def test_no_token_url():
 
 
 @pytest.mark.parametrize(
-    "url", ["https://github.com/a/b/releases", "https://github.com/a/b/releases/"]
-)
-def test_extract_github_repo_name(url):
-    assert changelog.extract_github_repo_name(url) == "a/b"
-
-
-def test_extract_github_repo_name_error():
-    with pytest.raises(
-        changelog.ChangelogError, match=r"^Changelog needs a Github releases URL"
-    ):
-        changelog.extract_github_repo_name("https://example.com")
-
-
-@pytest.mark.parametrize(
-    "url",
-    [
-        "https://git.privaterepo.com/a/b/releases",
-        "https://git.privaterepo.com/a/b/releases/",
-    ],
-)
-def test_extract_github_repo_different_root_url(url):
-    with pytest.raises(
-        changelog.ChangelogError, match=r"^Changelog needs a Github releases URL"
-    ):
-        changelog.extract_github_repo_name(url)
-
-    assert (
-        changelog.extract_github_repo_name(url, "https://git.privaterepo.com/") == "a/b"
-    )
-    assert (
-        changelog.extract_github_repo_name(url, "https://git.privaterepo.com") == "a/b"
-    )
-
-
-@pytest.mark.parametrize(
     "url", ["https://pypi.org/project/a", "https://pypi.org/project/a/"]
 )
 def test_extract_pypi_package_name(url):
@@ -166,14 +140,14 @@ def test_extract_pypi_package_name(url):
 
 def test_extract_pypi_package_name_error():
     with pytest.raises(
-        changelog.ChangelogError, match=r"^Changelog needs a PyPI project URL"
+        exceptions.ChangelogError, match=r"^Changelog needs a PyPI project URL"
     ):
         changelog.extract_pypi_package_name("https://example.com")
 
 
-def test_node_for_release_no_pypi(release_dict):
+def test_node_for_release_no_pypi(release):
     assert node_to_string(
-        changelog.node_for_release(release=release_dict, pypi_name=None)
+        changelog.node_for_release(release=release, pypi_name=None)
     ) == canonicalize(
         """
         <section ids="release-1-0-0">
@@ -189,24 +163,22 @@ def test_node_for_release_no_pypi(release_dict):
     )
 
 
-def test_node_for_release_title_tag(release_dict):
-    release_dict["name"] = "Bla 1.0.0"
+def test_node_for_release_title_tag(release):
+    release.name = "Bla 1.0.0"
     assert "<title>Bla 1.0.0</title>" in node_to_string(
-        changelog.node_for_release(release=release_dict, pypi_name=None)
+        changelog.node_for_release(release=release, pypi_name=None)
     )
 
 
-def test_node_for_release_none_title(release_dict):
-    release_dict["name"] = None
+def test_node_for_release_none_title(release):
+    release.name = None
     assert "<title>1.0.0</title>" in node_to_string(
-        changelog.node_for_release(release=release_dict, pypi_name=None)
+        changelog.node_for_release(release=release, pypi_name=None)
     )
 
 
-def test_node_for_release_title_pypy(release_dict):
-    value = node_to_string(
-        changelog.node_for_release(release=release_dict, pypi_name="foo")
-    )
+def test_node_for_release_title_pypy(release):
+    value = node_to_string(changelog.node_for_release(release=release, pypi_name="foo"))
 
     assert (
         """<reference refuri="https://pypi.org/project/foo/1.0.0/">PyPI</reference>"""
@@ -214,93 +186,9 @@ def test_node_for_release_title_pypy(release_dict):
     )
 
 
-def test_node_for_release_draft(release_dict):
-    release_dict["isDraft"] = True
-    assert changelog.node_for_release(release=release_dict, pypi_name="foo") is None
-
-
-def test_extract_releases(github_payload, release_dict, mocker):
-    mocker.patch(
-        "sphinx_github_changelog.changelog.github_call", return_value=github_payload
-    )
-    assert changelog.extract_releases(owner_repo="a/b", token="token") == [
-        release_dict,
-    ]
-
-
-def test_extract_releases_custom_graphql_url(github_payload, release_dict, mocker):
-    mocker.patch(
-        "sphinx_github_changelog.changelog.github_call", return_value=github_payload
-    )
-    assert changelog.extract_releases(
-        owner_repo="a/b",
-        token="token",
-        graphql_url="https://git.privaterepo.com/graphql",
-    ) == [
-        release_dict,
-    ]
-
-
-def test_extract_releases_remove_none(github_payload, release_dict, mocker):
-    mocker.patch(
-        "sphinx_github_changelog.changelog.github_call",
-        return_value={
-            "data": {"repository": {"releases": {"nodes": [None, 1, None, 2]}}}
-        },
-    )
-    assert changelog.extract_releases(owner_repo="a/b", token="token") == [1, 2]
-
-
-def test_extract_releases_errors(github_payload, release_dict, mocker):
-    mocker.patch(
-        "sphinx_github_changelog.changelog.github_call",
-        return_value={"errors": [{"message": "c"}, {"message": "d"}]},
-    )
-    with pytest.raises(changelog.ChangelogError) as exc_info:
-        changelog.extract_releases(owner_repo="a/b", token="token")
-
-    assert str(exc_info.value) == "GitHub API error response: \nc\nd"
-
-
-def test_extract_releases_format(github_payload, release_dict, mocker):
-    mocker.patch(
-        "sphinx_github_changelog.changelog.github_call",
-        return_value={"data": {"repository": None}},
-    )
-    with pytest.raises(changelog.ChangelogError) as exc_info:
-        changelog.extract_releases(owner_repo="a/b", token="token")
-
-    error = "GitHub API error unexpected format:\n{'data': {'repository': None}}"
-    assert str(exc_info.value) == error
-
-
-def test_github_call(httpx_mock):
-    url = "https://api.github.com/graphql"
-    payload = {"message": "foo"}
-    httpx_mock.add_response(url=url, method="POST", json=payload)
-    assert changelog.github_call(url=url, token="token", query="") == payload
-
-
-def test_github_call_http_error(httpx_mock):
-    url = "https://api.github.com/graphql"
-    httpx_mock.add_response(
-        url=url, method="POST", status_code=400, json={"message": "foo"}
-    )
-    with pytest.raises(changelog.ChangelogError) as exc_info:
-        changelog.github_call(url=url, token="token", query="")
-
-    assert str(exc_info.value) == (
-        "Unexpected GitHub API error status code: 400\n" """{"message":"foo"}"""
-    )
-
-
-def test_github_call_http_error_connection(httpx_mock):
-    url = "https://api.github.com/graphql"
-    httpx_mock.add_exception(httpx.ConnectError("bar"), url=url, method="POST")
-    with pytest.raises(changelog.ChangelogError) as exc_info:
-        changelog.github_call(url=url, token="token", query="")
-
-    assert str(exc_info.value) == "Could not retrieve changelog from github: bar"
+def test_node_for_release_draft(release):
+    release.is_draft = True
+    assert changelog.node_for_release(release=release, pypi_name="foo") is None
 
 
 @pytest.mark.parametrize(
@@ -323,57 +211,6 @@ def test_get_token_from_env(monkeypatch):
     assert credentials.get_token_from_env() is None
 
 
-def test_transforms_private_image_url():
-    html = (
-        '<img src="https://private-user-images.githubusercontent.com/'
-        "123/456789-abcd1234-5678-90ab-cdef-123456789012.png"
-        '?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&amp;exp=1234567890">'
-    )
-    result = changelog.transform_private_image_urls(html)
-    assert result == (
-        '<img src="https://github.com/user-attachments/assets/'
-        'abcd1234-5678-90ab-cdef-123456789012">'
-    )
-
-
-def test_transforms_multiple_urls():
-    html = (
-        '<img src="https://private-user-images.githubusercontent.com/'
-        '123/111-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.png?jwt=token1">'
-        '<img src="https://private-user-images.githubusercontent.com/'
-        '456/222-11111111-2222-3333-4444-555555555555.jpg?jwt=token2">'
-    )
-    result = changelog.transform_private_image_urls(html)
-    assert (
-        "https://github.com/user-attachments/assets/"
-        "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-    ) in result
-    assert (
-        "https://github.com/user-attachments/assets/"
-        "11111111-2222-3333-4444-555555555555"
-    ) in result
-    assert "private-user-images" not in result
-
-
-def test_preserves_other_urls():
-    html = (
-        '<img src="https://example.com/image.png">'
-        '<a href="https://github.com/repo">link</a>'
-    )
-    result = changelog.transform_private_image_urls(html)
-    assert result == html
-
-
-def test_handles_empty_string():
-    assert changelog.transform_private_image_urls("") == ""
-
-
-def test_handles_html_without_images():
-    html = "<p>No images here</p>"
-    result = changelog.transform_private_image_urls(html)
-    assert result == html
-
-
 ALERT_MARKDOWN = """Regular content
 
 > [!NOTE]
@@ -381,16 +218,22 @@ ALERT_MARKDOWN = """Regular content
 """
 
 
-def test_converts_alerts_by_default(release_dict):
-    release_dict["description"] = ALERT_MARKDOWN
-    result = changelog.node_for_release(release=release_dict, pypi_name=None)
+def test_converts_alerts_by_default(release):
+    release.description = ALERT_MARKDOWN
+    result = changelog.node_for_release(release=release, pypi_name=None)
     result_str = node_to_string(result)
     assert "<note>" in result_str
 
 
-def test_preserves_non_alert_content(release_dict):
-    release_dict["description"] = ALERT_MARKDOWN
-    result = changelog.node_for_release(release=release_dict, pypi_name=None)
+def test_preserves_non_alert_content(release):
+    release.description = ALERT_MARKDOWN
+    result = changelog.node_for_release(release=release, pypi_name=None)
     result_str = node_to_string(result)
     # Regular content should still be present
     assert "Regular content" in result_str
+
+
+def test_convert_markdown_to_nodes_empty():
+    assert changelog.convert_markdown_to_nodes(None) == []
+    assert changelog.convert_markdown_to_nodes("") == []
+    assert changelog.convert_markdown_to_nodes("   ") == []
