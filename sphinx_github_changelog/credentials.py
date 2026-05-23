@@ -11,13 +11,18 @@ import os
 import subprocess
 from contextlib import suppress
 
+from . import exceptions
 
-def get_token_from_env(host: str = "github.com") -> str | None:
+
+def get_token_from_env() -> str | None:
     """Get a GitHub token from the SPHINX_GITHUB_CHANGELOG_TOKEN env var.
 
     Return None if the environment variable is not set.
     """
-    return os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
+    if "SPHINX_GITHUB_CHANGELOG_TOKEN" in os.environ:
+        return os.environ["SPHINX_GITHUB_CHANGELOG_TOKEN"]
+
+    return os.environ.get("GITHUB_TOKEN")
 
 
 def is_github_token(token: str) -> bool:
@@ -33,7 +38,7 @@ def is_github_token(token: str) -> bool:
     return token.startswith("gh") and len(token) > 4 and token[3] == "_"
 
 
-def get_token_from_git_credential(host: str = "github.com") -> str | None:
+def get_token_from_git_credential(host: str) -> str | None:
     """
     Get a GitHub access token using git's credential helper.
 
@@ -47,14 +52,14 @@ def get_token_from_git_credential(host: str = "github.com") -> str | None:
             input=f"protocol=https\nhost={host}\n",
             text=True,
         )
-        for ln in resp.splitlines():
-            key, _, value = ln.partition("=")
+        for line in resp.splitlines():
+            key, value = line.split("=", maxsplit=1)
             if key == "password" and is_github_token(value):
                 return value
     return None
 
 
-def get_token_from_gh_cli(host: str = "github.com") -> str | None:
+def get_token_from_gh_cli(host: str) -> str | None:
     """Get a GitHub token using the GitHub CLI (gh auth token)."""
     with suppress(subprocess.CalledProcessError, FileNotFoundError):
         token = subprocess.check_output(
@@ -65,7 +70,7 @@ def get_token_from_gh_cli(host: str = "github.com") -> str | None:
     return None
 
 
-def get_github_token(host: str = "github.com") -> str | None:
+def get_github_token(host: str) -> str:
     """
     Try to obtain a GitHub token using several mechanisms in order.
 
@@ -73,10 +78,13 @@ def get_github_token(host: str = "github.com") -> str | None:
     2. git credential helper
     3. gh CLI
 
-    Returns None if no token is found.
+    Raises CouldNotExtract if no token is found.
     """
-    return (
-        get_token_from_env(host)
-        or get_token_from_git_credential(host)
-        or get_token_from_gh_cli(host)
+    token = (
+        get_token_from_env()
+        or get_token_from_git_credential(host=host)
+        or get_token_from_gh_cli(host=host)
     )
+    if not token:
+        raise exceptions.CouldNotExtract("No GitHub token found")
+    return token
