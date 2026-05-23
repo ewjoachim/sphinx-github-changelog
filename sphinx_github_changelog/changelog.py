@@ -1,25 +1,13 @@
 from __future__ import annotations
 
-import re
-from collections.abc import Iterable
-from typing import Any
-
-import httpx
 from docutils import nodes
 from docutils.frontend import get_default_settings
-
-# types-docutils (from typeshed) is usable but incomplete.
-# docutils-stubs is more complete but
-# https://github.com/tk0miya/docutils-stubs/issues/33
 from docutils.parsers.rst import Directive, directives
 from docutils.utils import new_document
 from myst_parser.parsers.docutils_ import Parser
 
-from . import credentials, urls
-
-
-class ChangelogError(Exception):
-    pass
+from . import config as config_module
+from . import credentials, exceptions, github_releases, urls
 
 
 class ChangelogDirective(Directive):
@@ -37,61 +25,44 @@ class ChangelogDirective(Directive):
     add_index = False
 
     def run(self) -> list[nodes.Node]:
-        config = self.state.document.settings.env.config
+        options = config_module.ChangelogDirectiveOptions.from_options(self.options)
+        config = config_module.ChangelogConfig.from_sphinx_env_config(
+            self.state.document.settings.env.config
+        )
         try:
-            return compute_changelog(
-                token=config.sphinx_github_changelog_token,
-                options=self.options,
-                root_url=config.sphinx_github_changelog_root_repo,
-                graphql_url=config.sphinx_github_changelog_graphql_url,
-            )
-        except ChangelogError as exc:
+            return compute_changelog(options=options, config=config)
+        except exceptions.ChangelogError as exc:
             raise self.error(str(exc))
 
 
 def compute_changelog(
-    token: str | None,
-    options: dict[str, str],
-    root_url: str | None = None,
-    graphql_url: str | None = None,
+    options: config_module.ChangelogDirectiveOptions,
+    config: config_module.ChangelogConfig,
 ) -> list[nodes.Node]:
-    if options.get("github"):
-        # If a github URL is explicitly provided, validate that it is in
-        # the correct format i.e. refers to the /releases page.
-        github_url = options["github"]
-        root_url = root_url or urls.get_root_url(github_url)
-        owner_repo = extract_github_repo_name(github_url, root_url)
-    else:
-        # If no github URL is provided, try to get it from the git remote
-        # and validate that it is in the correct format.
-        remote_url = urls.get_default_github_url()
-        parsed_repo = remote_url and urls.parse_github_repo_from_url(remote_url)
-        if not parsed_repo:
-            raise ChangelogError(
-                "No :github: release URL provided and unable to determine it from "
-                "git remotes. Please provide a GitHub release URL in the format "
-                "(https://github.com/:owner/:repo/releases)"
-            )
-        owner_repo = parsed_repo
-        github_url = f"{remote_url}/releases"
-
-    # If graphql_url is not provided, derive from github_url
-    if not graphql_url:
-        graphql_url = urls.get_github_graphql_url(github_url)
+    try:
+        github_params = urls.extract_github_params(options=options, config=config)
+    except exceptions.CouldNotExtract as exc:
+        raise exceptions.ChangelogError(
+            "No :github: release URL provided and unable to determine it from "
+            "git remotes. Please provide a GitHub release URL in the format "
+            "(https://github.com/:owner/:repo/releases)"
+        ) from exc
 
     # If token is not provided, try to get it from helpers
+    token = config.token
     if not token:
-        host = urls.get_github_host_from_url(github_url)
-        token = credentials.get_github_token(host)
+        try:
+            token = credentials.get_github_token(host=github_params.hostname)
+        except exceptions.CouldNotExtract:
+            return no_token(changelog_url=options.changelog_url)
 
-    if not token:
-        return no_token(changelog_url=options.get("changelog-url"))
-
-    releases = extract_releases(
-        owner_repo=owner_repo, token=token, graphql_url=graphql_url
+    releases = github_releases.extract_releases(
+        github_params=github_params,
+        token=token,
+        graphql_url=config.graphql_url,
     )
 
-    pypi_name = extract_pypi_package_name(url=options.get("pypi"))
+    pypi_name = extract_pypi_package_name(url=options.pypi)
 
     result_nodes = (
         node_for_release(release=release, pypi_name=pypi_name) for release in releases
@@ -126,24 +97,6 @@ def no_token(changelog_url: str | None) -> list[nodes.Node]:
     return result
 
 
-def extract_github_repo_name(url: str, root_url: str | None = None) -> str:
-    stripped_url = url.rstrip("/")
-    prefix, postfix = (
-        root_url if root_url is not None else "https://github.com/",
-        "/releases",
-    )
-    if not prefix.endswith("/"):
-        prefix += "/"
-    url_is_correct = stripped_url.startswith(prefix) and stripped_url.endswith(postfix)
-    if not url_is_correct:
-        raise ChangelogError(
-            "Changelog needs a Github releases URL "
-            f"({prefix}:owner/:repo/releases). Received {url}"
-        )
-
-    return stripped_url[len(prefix) : -len(postfix)]
-
-
 def extract_pypi_package_name(url: str | None) -> str | None:
     if not url:
         return None
@@ -151,7 +104,7 @@ def extract_pypi_package_name(url: str | None) -> str | None:
     prefix = "https://pypi.org/project/"
     url_is_correct = stripped_url.startswith(prefix)
     if not url_is_correct:
-        raise ChangelogError(
+        raise exceptions.ChangelogError(
             "Changelog needs a PyPI project URL "
             f"(https://pypi.org/project/:project). Received {url}"
         )
@@ -165,31 +118,16 @@ def get_release_title(title: str | None, tag: str):
     return title if tag in title else f"{tag}: {title}"
 
 
-def transform_private_image_urls(html: str) -> str:
-    """Convert signed private image URLs to permanent user-attachments URLs.
-
-    When GitHub's GraphQL API returns release descriptions, images uploaded via
-    drag-and-drop are returned as signed private-user-images.githubusercontent.com
-    URLs with 5-minute JWT expiration. This converts them to permanent
-    github.com/user-attachments/assets/ URLs.
-    """
-    pattern = (
-        r"https://private-user-images\.githubusercontent\.com/"
-        r"\d+/(\d+)-([a-f0-9-]{36})\.([a-z]+)\?[^\"'>\s]+"
-    )
-    return re.sub(pattern, r"https://github.com/user-attachments/assets/\2", html)
-
-
 def node_for_release(
-    release: dict[str, Any],
+    release: github_releases.Release,
     pypi_name: str | None = None,
 ) -> nodes.Node | None:
-    if release["isDraft"]:
+    if release.is_draft:
         return None  # For now, draft releases are excluded
 
-    tag = release["tagName"]
-    title = release["name"]
-    date = release["publishedAt"][:10]
+    tag = release.tag_name
+    title = release.name
+    date = release.published_at.isoformat()
     title = get_release_title(title=title, tag=tag)
 
     # Section
@@ -202,7 +140,7 @@ def node_for_release(
     subtitle += nodes.Text(f"Released on {date} - ")
 
     # Links
-    subtitle += nodes.reference("", "GitHub", refuri=release["url"])
+    subtitle += nodes.reference("", "GitHub", refuri=release.url)
     if pypi_name:
         subtitle += nodes.Text(" - ")
         url = f"https://pypi.org/project/{pypi_name}/{tag}/"
@@ -212,70 +150,11 @@ def node_for_release(
     subtitle_paragraph += subtitle
     section += subtitle_paragraph
 
-    # Body - parse raw markdown with markdown-it-py
-    markdown_content = transform_private_image_urls(release["description"] or "")
-
-    changelog_nodes = convert_markdown_to_nodes(markdown_content)
-    section += changelog_nodes
+    section += convert_markdown_to_nodes(release.description)
     return section
 
 
-def extract_releases(
-    owner_repo: str, token: str, graphql_url: str | None = None
-) -> Iterable[dict[str, Any]]:
-    # Necessary for GraphQL
-    owner, repo = owner_repo.split("/")
-    query = f"""
-    query {{
-        repository(owner: "{owner}", name: "{repo}") {{
-            releases(orderBy: {{field: CREATED_AT, direction: DESC}}, first:100) {{
-                nodes {{
-                    name, description, url, tagName, publishedAt, isDraft
-                }}
-            }}
-        }}
-    }}
-    """
-    full_query = {"query": query.replace("\n", "")}
-
-    url = "https://api.github.com/graphql" if graphql_url is None else graphql_url
-
-    result = github_call(url=url, query=full_query, token=token)
-    if "errors" in result:
-        raise ChangelogError(
-            "GitHub API error response: \n"
-            + "\n".join(e.get("message", str(e)) for e in result["errors"])
-        )
-    try:
-        releases = result["data"]["repository"]["releases"]["nodes"]
-        # If you don't have the right to see draft releases, they're "None"
-        return [r for r in releases if r]
-    except (KeyError, TypeError):
-        raise ChangelogError(f"GitHub API error unexpected format:\n{result!r}")
-
-
-def github_call(url, token, query):
-    try:
-        response = httpx.post(
-            url, json=query, headers={"Authorization": f"token {token}"}
-        ).raise_for_status()
-
-    except httpx.HTTPStatusError as exc:
-        # GraphQL always responds 200
-        raise ChangelogError(
-            f"Unexpected GitHub API error status code: {exc.response.status_code}\n"
-            f"{exc.response.text}"
-        ) from exc
-    except httpx.HTTPError as exc:
-        raise ChangelogError(
-            "Could not retrieve changelog from github: " + str(exc)
-        ) from exc
-
-    # Let's not imagine if GitHub responds non-json...
-    return response.json()
-
-
-def convert_markdown_to_nodes(markdown: str) -> list[nodes.Node]:
+def convert_markdown_to_nodes(markdown: str | None) -> list[nodes.Node]:
     """
     Convert markdown to docutils nodes
     """

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import os
 import subprocess
 from pathlib import Path
 
 import pytest
+
+from sphinx_github_changelog import github_releases
 
 pytest_plugins = "sphinx.testing.fixtures"
 
@@ -27,17 +28,19 @@ def release_dict():
 
 
 @pytest.fixture
+def release(release_dict):
+    return github_releases.Release.from_graphql(release_dict)
+
+
+@pytest.fixture
 def github_payload(release_dict):
     return {"data": {"repository": {"releases": {"nodes": [release_dict]}}}}
 
 
 @pytest.fixture(autouse=True)
-def env():
-    old_env = os.environ.copy()
-    os.environ.pop("SPHINX_GITHUB_CHANGELOG_TOKEN", None)
-    yield os.environ
-    os.environ.clear()
-    os.environ.update(old_env)
+def env(monkeypatch):
+    monkeypatch.delenv("SPHINX_GITHUB_CHANGELOG_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
 
 
 @pytest.fixture

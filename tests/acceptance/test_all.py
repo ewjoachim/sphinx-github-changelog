@@ -95,7 +95,7 @@ def test_build(app, httpx_mock, full_gfm_release_dict):
     received = (app.outdir / "index.html").read_text()
     print(received)
     query = json.loads(httpx_mock.get_requests()[0].content)["query"]
-    assert query.lstrip().startswith("query {")
+    assert "query($owner: String!, $repo: String!)" in query
     assert expected in received
 
 
@@ -103,7 +103,6 @@ def test_build(app, httpx_mock, full_gfm_release_dict):
 def test_error(app, status, warning):
     app.builder.build_all()
     assert (
-        "Changelog needs a Github releases URL "
-        "(https://wrong-url.com/:owner/:repo/releases). "
-        "Received https://wrong-url.com/" in warning.getvalue()
+        "No :github: release URL provided and unable to determine it from "
+        "git remotes." in warning.getvalue()
     )
