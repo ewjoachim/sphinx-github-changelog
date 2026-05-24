@@ -198,6 +198,9 @@ def test_node_for_release_draft(release):
         ("1.0.0: Foo", "1.0.0", "1.0.0: Foo"),
         ("Fix 1.0.0", "1.0.1", "1.0.1: Fix 1.0.0"),
         (None, "1.0.0", "1.0.0"),
+        ("Foo", "v1.0.0", "1.0.0: Foo"),
+        ("1.0.0: Foo", "v1.0.0", "1.0.0: Foo"),
+        (None, "v1.0.0", "1.0.0"),
     ],
 )
 def test_get_release_title(title, tag, expected):
