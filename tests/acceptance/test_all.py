@@ -79,6 +79,7 @@ Let's rename \*our-new-project\* to \*our-old-project\*.
         "tagName": "1.0.0",
         "publishedAt": "2000-01-01",
         "isDraft": False,
+        "isPrerelease": False,
     }
 
 

@@ -17,6 +17,7 @@ class Release:
     tag_name: str
     published_at: datetime.date
     is_draft: bool
+    is_prerelease: bool
 
     @classmethod
     def from_graphql(cls, data: dict) -> Release:
@@ -27,6 +28,7 @@ class Release:
             tag_name=data["tagName"],
             published_at=datetime.date.fromisoformat(data["publishedAt"][:10]),
             is_draft=data["isDraft"],
+            is_prerelease=data["isPrerelease"],
         )
 
 
@@ -40,7 +42,7 @@ def extract_releases(
         repository(owner: $owner, name: $repo) {
             releases(orderBy: {field: CREATED_AT, direction: DESC}, first:100) {
                 nodes {
-                    name, description, url, tagName, publishedAt, isDraft
+                    name, description, url, tagName, publishedAt, isDraft, isPrerelease
                 }
             }
         }
