@@ -24,6 +24,7 @@ def release_dict():
         "tagName": "1.0.0",
         "publishedAt": "2000-01-01",
         "isDraft": False,
+        "isPrerelease": False,
     }
 
 

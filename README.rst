@@ -178,15 +178,29 @@ environment variable. You can also set the token as ``sphinx_github_changelog_to
 Extension options (``conf.py``)
 -------------------------------
 
-- ``sphinx_github_changelog_token`` (optional): GitHub API token, if needed, see above
-  (please do **NOT** commit your secrets).
+All options can also be set via environment variables of the same name in uppercase
+(e.g. ``SPHINX_GITHUB_CHANGELOG_TOKEN``).
 
-The following options are useful in some cases, though most of the time, the
-corresponding values will be detected automatically from the ``:github:`` parameter
-passed to the directive:
+.. list-table::
+   :header-rows: 1
+   :widths: 30 10 60
 
-- ``sphinx_github_changelog_root_repo`` (optional): Root URL to the repository.
-- ``sphinx_github_changelog_graphql_url`` (optional): URL to GraphQL API.
+   * - Option
+     - Default
+     - Description
+   * - ``sphinx_github_changelog_token``
+     - ``None``
+     - GitHub API token. See above (please do **NOT** commit your secrets).
+   * - ``sphinx_github_changelog_root_repo``
+     - ``None``
+     - Root URL to the repository. Usually detected automatically.
+   * - ``sphinx_github_changelog_graphql_url``
+     - ``None``
+     - URL to GraphQL API. Usually detected automatically.
+   * - ``sphinx_github_changelog_include_prereleases``
+     - ``True``
+     - Whether to include pre-releases in the changelog. Set to ``False``
+       to exclude them (env var accepts ``0``, ``false``, ``no``).
 
 .. _ReadTheDocs: https://readthedocs.org/
 

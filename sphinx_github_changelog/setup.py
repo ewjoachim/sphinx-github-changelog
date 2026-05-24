@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.metadata
-import os
 
 from . import changelog, config
 
@@ -11,11 +10,10 @@ def version() -> str:
 
 
 def setup(app):
-    for name in config.ChangelogConfig.get_field_names():
-        option_name = f"{config.ChangelogConfig.prefix}_{name}"
+    for option_name, default in config.ChangelogConfig.get_config_defaults():
         app.add_config_value(
             name=option_name,
-            default=os.environ.get(option_name.upper()),
+            default=default,
             rebuild="html",
         )
 

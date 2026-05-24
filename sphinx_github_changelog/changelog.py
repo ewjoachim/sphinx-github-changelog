@@ -64,6 +64,9 @@ def compute_changelog(
 
     pypi_name = extract_pypi_package_name(url=options.pypi)
 
+    if not config.include_prereleases:
+        releases = [r for r in releases if not r.is_prerelease]
+
     result_nodes = (
         node_for_release(release=release, pypi_name=pypi_name) for release in releases
     )

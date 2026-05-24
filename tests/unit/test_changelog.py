@@ -78,6 +78,30 @@ def test_compute_changelog_token(extract_releases):
     assert "1.0.0: A new hope" in node_to_string(nodes[0])
 
 
+def test_compute_changelog_exclude_prereleases(mocker, release):
+    release.is_prerelease = True
+    mocker.patch(
+        "sphinx_github_changelog.github_releases.extract_releases",
+        return_value=[release],
+    )
+    options = config_module.ChangelogDirectiveOptions(
+        github="https://github.com/a/b/releases",
+    )
+    config = config_module.ChangelogConfig(token="token", include_prereleases=False)
+    nodes = changelog.compute_changelog(options=options, config=config)
+    assert nodes == []
+
+
+def test_compute_changelog_include_prereleases(extract_releases, release):
+    release.is_prerelease = True
+    options = config_module.ChangelogDirectiveOptions(
+        github="https://github.com/a/b/releases",
+    )
+    config = config_module.ChangelogConfig(token="token", include_prereleases=True)
+    nodes = changelog.compute_changelog(options=options, config=config)
+    assert "1.0.0: A new hope" in node_to_string(nodes[0])
+
+
 def test_no_token_no_url():
     assert node_to_string(changelog.no_token(changelog_url=None)) == canonicalize(
         """
