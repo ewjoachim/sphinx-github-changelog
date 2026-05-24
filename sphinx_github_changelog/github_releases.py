@@ -54,8 +54,13 @@ def extract_releases(
     result = github_call(url=url, payload=payload, token=token)
     try:
         releases = result["data"]["repository"]["releases"]["nodes"]
+        # Sort by publication date descending (API only supports CREATED_AT ordering)
         # If you don't have the right to see draft releases, they're "None"
-        return [Release.from_graphql(r) for r in releases if r]
+        return sorted(
+            (Release.from_graphql(r) for r in releases if r),
+            key=lambda r: r.published_at,
+            reverse=True,
+        )
     except (KeyError, TypeError):
         raise exceptions.GitHubAPIError(
             f"GitHub API error unexpected format:\n{result!r}"
