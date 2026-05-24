@@ -5,14 +5,14 @@
 | Name                                          |    Stmts |     Miss |   Branch |   BrPart |    Cover |   Missing |
 |---------------------------------------------- | -------: | -------: | -------: | -------: | -------: | --------: |
 | sphinx\_github\_changelog/\_\_init\_\_.py     |        3 |        0 |        0 |        0 |     100% |           |
-| sphinx\_github\_changelog/changelog.py        |       99 |        0 |       16 |        0 |     100% |           |
+| sphinx\_github\_changelog/changelog.py        |      101 |        0 |       16 |        0 |     100% |           |
 | sphinx\_github\_changelog/config.py           |       23 |        0 |        0 |        0 |     100% |           |
 | sphinx\_github\_changelog/credentials.py      |       30 |        0 |       10 |        0 |     100% |           |
 | sphinx\_github\_changelog/exceptions.py       |        7 |        0 |        0 |        0 |     100% |           |
 | sphinx\_github\_changelog/github\_releases.py |       38 |        0 |        2 |        0 |     100% |           |
 | sphinx\_github\_changelog/setup.py            |       12 |        0 |        2 |        0 |     100% |           |
 | sphinx\_github\_changelog/urls.py             |       67 |        0 |       18 |        0 |     100% |           |
-| **TOTAL**                                     |  **279** |    **0** |   **48** |    **0** | **100%** |           |
+| **TOTAL**                                     |  **281** |    **0** |   **48** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
