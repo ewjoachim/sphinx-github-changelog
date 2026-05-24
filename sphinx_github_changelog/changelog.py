@@ -113,9 +113,10 @@ def extract_pypi_package_name(url: str | None) -> str | None:
 
 
 def get_release_title(title: str | None, tag: str):
+    version = tag.removeprefix("v")
     if not title:
-        return tag
-    return title if tag in title else f"{tag}: {title}"
+        return version
+    return title if version in title else f"{version}: {title}"
 
 
 def node_for_release(
@@ -126,12 +127,13 @@ def node_for_release(
         return None  # For now, draft releases are excluded
 
     tag = release.tag_name
+    version = tag.removeprefix("v")
     title = release.name
     date = release.published_at.isoformat()
     title = get_release_title(title=title, tag=tag)
 
     # Section
-    id_section = nodes.make_id("release-" + tag)
+    id_section = nodes.make_id("release-" + version)
     section = nodes.section(ids=[id_section])
 
     section += nodes.title(text=title)
@@ -143,7 +145,7 @@ def node_for_release(
     subtitle += nodes.reference("", "GitHub", refuri=release.url)
     if pypi_name:
         subtitle += nodes.Text(" - ")
-        url = f"https://pypi.org/project/{pypi_name}/{tag}/"
+        url = f"https://pypi.org/project/{pypi_name}/{version}/"
         subtitle += nodes.reference("", "PyPI", refuri=url)
 
     subtitle_paragraph = nodes.paragraph()
