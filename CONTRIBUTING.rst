@@ -40,6 +40,13 @@ The easiest way to run the tests on a single python version is:
 
     $ uv run pytest
 
+Coverage is enforced at 100% on merged matrix coverage in CI. Branches gated by
+Python-version checks do not need to be covered in every local test run, as long as
+they are covered by at least one CI matrix job. When you run pytest locally, you'll get
+a terminal report at the bottom as well as a more detailed HTML report in
+``htmlcov/index.html``. In PRs, a summary of the coverage report is posted as a comment
+by the CI.
+
 
 I want to build the documentation
 ---------------------------------
