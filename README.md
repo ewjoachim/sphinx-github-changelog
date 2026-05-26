@@ -2,17 +2,17 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/ewjoachim/sphinx-github-changelog/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                                          |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
-|---------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| sphinx\_github\_changelog/\_\_init\_\_.py     |        3 |        0 |        0 |        0 |    100% |           |
-| sphinx\_github\_changelog/changelog.py        |      108 |        0 |       20 |        0 |    100% |           |
-| sphinx\_github\_changelog/config.py           |       38 |        2 |       10 |        2 |     92% |    46, 50 |
-| sphinx\_github\_changelog/credentials.py      |       30 |        0 |       10 |        0 |    100% |           |
-| sphinx\_github\_changelog/exceptions.py       |        7 |        0 |        0 |        0 |    100% |           |
-| sphinx\_github\_changelog/github\_releases.py |       64 |        0 |       14 |        0 |    100% |           |
-| sphinx\_github\_changelog/setup.py            |       10 |        0 |        2 |        0 |    100% |           |
-| sphinx\_github\_changelog/urls.py             |       70 |        0 |       18 |        0 |    100% |           |
-| **TOTAL**                                     |  **330** |    **2** |   **74** |    **2** | **99%** |           |
+| Name                                          |    Stmts |     Miss |   Branch |   BrPart |    Cover |   Missing |
+|---------------------------------------------- | -------: | -------: | -------: | -------: | -------: | --------: |
+| sphinx\_github\_changelog/\_\_init\_\_.py     |        3 |        0 |        0 |        0 |     100% |           |
+| sphinx\_github\_changelog/changelog.py        |      108 |        0 |       20 |        0 |     100% |           |
+| sphinx\_github\_changelog/config.py           |       38 |        0 |       10 |        0 |     100% |           |
+| sphinx\_github\_changelog/credentials.py      |       30 |        0 |       10 |        0 |     100% |           |
+| sphinx\_github\_changelog/exceptions.py       |        7 |        0 |        0 |        0 |     100% |           |
+| sphinx\_github\_changelog/github\_releases.py |       64 |        0 |       14 |        0 |     100% |           |
+| sphinx\_github\_changelog/setup.py            |       10 |        0 |        2 |        0 |     100% |           |
+| sphinx\_github\_changelog/urls.py             |       70 |        0 |       18 |        0 |     100% |           |
+| **TOTAL**                                     |  **330** |    **0** |   **74** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
