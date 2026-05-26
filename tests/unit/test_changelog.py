@@ -75,6 +75,8 @@ def test_compute_changelog_token(extract_releases):
     )
     config = config_module.ChangelogConfig(token="token")
     nodes = changelog.compute_changelog(options=options, config=config)
+    extract_releases.assert_called_once()
+    assert extract_releases.call_args.kwargs["retries"] == 3
     assert "1.0.0: A new hope" in node_to_string(nodes[0])
 
 
@@ -100,6 +102,19 @@ def test_compute_changelog_include_prereleases(extract_releases, release):
     config = config_module.ChangelogConfig(token="token", include_prereleases=True)
     nodes = changelog.compute_changelog(options=options, config=config)
     assert "1.0.0: A new hope" in node_to_string(nodes[0])
+
+
+def test_compute_changelog_token_reraises_api_error(mocker):
+    mocker.patch(
+        "sphinx_github_changelog.github_releases.extract_releases",
+        side_effect=exceptions.GitHubAPIError("boom"),
+    )
+    options = config_module.ChangelogDirectiveOptions(
+        github="https://github.com/a/b/releases",
+    )
+    config = config_module.ChangelogConfig(token="token")
+    with pytest.raises(exceptions.GitHubAPIError, match="boom"):
+        changelog.compute_changelog(options=options, config=config)
 
 
 def test_no_token_no_url():
