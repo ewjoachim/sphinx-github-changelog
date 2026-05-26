@@ -20,63 +20,68 @@ class Release:
     is_prerelease: bool
 
     @classmethod
-    def from_graphql(cls, data: dict) -> Release:
+    def from_rest(cls, data: dict) -> Release:
+        published_or_created = data.get("published_at") or data.get("created_at")
+        if not published_or_created:
+            raise exceptions.GitHubAPIError(
+                f"GitHub API error release has no publication date:\n{data!r}"
+            )
         return cls(
             name=data["name"],
-            description=data["description"],
-            url=data["url"],
-            tag_name=data["tagName"],
-            published_at=datetime.date.fromisoformat(data["publishedAt"][:10]),
-            is_draft=data["isDraft"],
-            is_prerelease=data["isPrerelease"],
+            description=data["body"],
+            url=data["html_url"],
+            tag_name=data["tag_name"],
+            published_at=datetime.date.fromisoformat(published_or_created[:10]),
+            is_draft=data["draft"],
+            is_prerelease=data["prerelease"],
         )
 
 
 def extract_releases(
     github_params: urls.GitHubParams,
-    token: str,
-    graphql_url: str | None = None,
+    token: str | None,
 ) -> Sequence[Release]:
-    query = """
-    query($owner: String!, $repo: String!) {
-        repository(owner: $owner, name: $repo) {
-            releases(orderBy: {field: CREATED_AT, direction: DESC}, first:100) {
-                nodes {
-                    name, description, url, tagName, publishedAt, isDraft, isPrerelease
-                }
-            }
-        }
-    }
-    """
-    payload = {
-        "query": query,
-        "variables": {"owner": github_params.owner, "repo": github_params.repo},
-    }
-    url = graphql_url or github_params.graphql_url
-    result = github_call(url=url, payload=payload, token=token)
-    try:
-        releases = result["data"]["repository"]["releases"]["nodes"]
-        # Sort by publication date descending (API only supports CREATED_AT ordering)
-        # If you don't have the right to see draft releases, they're "None"
-        return sorted(
-            (Release.from_graphql(r) for r in releases if r),
-            key=lambda r: r.published_at,
-            reverse=True,
+    page = 1
+    releases: list[Release] = []
+    while True:
+        result = github_call(
+            url=github_params.releases_api_url,
+            token=token,
+            params={"per_page": 100, "page": page},
         )
-    except (KeyError, TypeError):
-        raise exceptions.GitHubAPIError(
-            f"GitHub API error unexpected format:\n{result!r}"
-        )
+        if not result:
+            break
+        try:
+            releases.extend(Release.from_rest(r) for r in result)
+        except (KeyError, TypeError) as exc:
+            raise exceptions.GitHubAPIError(
+                f"GitHub API error unexpected format:\n{result!r}"
+            ) from exc
+        page += 1
+
+    # Sort by publication date descending
+    return sorted(
+        releases,
+        key=lambda r: r.published_at,
+        reverse=True,
+    )
 
 
-def github_call(url: str, token: str, payload: dict) -> dict:
+def github_call(url: str, token: str | None, params: dict[str, int]) -> list[dict]:
+    headers = {
+        "Accept": "application/vnd.github+json",
+    }
+    if token:
+        headers["Authorization"] = f"token {token}"
+
     try:
-        response = httpx.post(
-            url, json=payload, headers={"Authorization": f"token {token}"}
+        response = httpx.get(
+            url,
+            params=params,
+            headers=headers,
         ).raise_for_status()
 
     except httpx.HTTPStatusError as exc:
-        # GraphQL always responds 200
         raise exceptions.GitHubAPIError(
             f"Unexpected GitHub API error status code: {exc.response.status_code}\n"
             f"{exc.response.text}"
@@ -87,9 +92,8 @@ def github_call(url: str, token: str, payload: dict) -> dict:
         ) from exc
 
     response_payload = response.json()
-    if "errors" in response_payload:
+    if not isinstance(response_payload, list):
         raise exceptions.GitHubAPIError(
-            "GitHub API error response: \n"
-            + "\n".join(e.get("message", str(e)) for e in response_payload["errors"])
+            f"GitHub API error unexpected format:\n{response_payload!r}"
         )
     return response_payload

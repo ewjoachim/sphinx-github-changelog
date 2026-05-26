@@ -25,7 +25,6 @@ class ChangelogDirectiveOptions:
 class ChangelogConfig:
     token: str | None = None
     root_repo: str | None = None
-    graphql_url: str | None = None
     include_prereleases: bool = True
 
     prefix: ClassVar[str] = "sphinx_github_changelog"
@@ -50,6 +49,5 @@ class ChangelogConfig:
         return cls(
             token=sphinx_config.sphinx_github_changelog_token,
             root_repo=sphinx_config.sphinx_github_changelog_root_repo,
-            graphql_url=sphinx_config.sphinx_github_changelog_graphql_url,
             include_prereleases=sphinx_config.sphinx_github_changelog_include_prereleases,
         )

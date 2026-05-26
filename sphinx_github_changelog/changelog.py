@@ -48,19 +48,25 @@ def compute_changelog(
             "(https://github.com/:owner/:repo/releases)"
         ) from exc
 
-    # If token is not provided, try to get it from helpers
+    # If token is not provided, try to get it from helpers.
+    # Missing credentials are tolerated: public repositories can still be
+    # queried anonymously via the GitHub REST API.
     token = config.token
     if not token:
         try:
             token = credentials.get_github_token(host=github_params.hostname)
         except exceptions.CouldNotExtract:
-            return no_token(changelog_url=options.changelog_url)
+            token = None
 
-    releases = github_releases.extract_releases(
-        github_params=github_params,
-        token=token,
-        graphql_url=config.graphql_url,
-    )
+    try:
+        releases = github_releases.extract_releases(
+            github_params=github_params,
+            token=token,
+        )
+    except exceptions.GitHubAPIError:
+        if token is None:
+            return no_token(changelog_url=options.changelog_url)
+        raise
 
     pypi_name = extract_pypi_package_name(url=options.pypi)
 
@@ -77,8 +83,9 @@ def compute_changelog(
 def no_token(changelog_url: str | None) -> list[nodes.Node]:
     par = nodes.paragraph()
     par += nodes.Text(
-        "Changelog was not built because no GitHub authentication token was found. "
-        "An access token can be provided using the "
+        "Changelog was not built because unauthenticated GitHub API access failed and "
+        "no GitHub authentication token was found. An access token can be provided "
+        "using the "
     )
     par += nodes.literal("", "SPHINX_GITHUB_CHANGELOG_TOKEN")
     par += nodes.Text(" environment variable or the ")
