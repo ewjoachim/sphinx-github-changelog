@@ -45,6 +45,13 @@ def env(monkeypatch):
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
 
 
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        "filter_headers": [("authorization", "DUMMY")],
+    }
+
+
 @pytest.fixture
 def temp_git(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Fixture to create a temporary git repository."""
