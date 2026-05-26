@@ -187,6 +187,7 @@ def test_github_call_retries_on_rate_limit(httpx_mock):
         token="token",
         params={"per_page": 100, "page": 1},
         retries=1,
+        sleep=lambda _: None,
     ) == [{"message": "ok"}]
 
 
@@ -211,6 +212,7 @@ def test_github_call_rate_limit_exhausted(httpx_mock):
             token="token",
             params={"per_page": 100, "page": 1},
             retries=1,
+            sleep=lambda _: None,
         )
 
     assert str(exc_info.value) == "GitHub API rate limited (429) after 1 retries."
