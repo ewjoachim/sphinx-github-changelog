@@ -91,13 +91,18 @@ def test_repo_url():
     assert params.repo_url == "https://github.com/org/repo"
 
 
-def test_graphql_url_github_com():
+def test_rest_api_url_github_com():
     params = urls.GitHubParams(hostname="github.com", owner="org", repo="repo")
-    assert params.graphql_url == "https://api.github.com/graphql"
+    assert params.rest_api_url == "https://api.github.com"
 
 
-def test_graphql_url_enterprise():
+def test_rest_api_url_enterprise():
     params = urls.GitHubParams(
         hostname="github.enterprise.com", owner="org", repo="repo"
     )
-    assert params.graphql_url == "https://github.enterprise.com/api/graphql"
+    assert params.rest_api_url == "https://github.enterprise.com/api/v3"
+
+
+def test_releases_api_url_github_com():
+    params = urls.GitHubParams(hostname="github.com", owner="org", repo="repo")
+    assert params.releases_api_url == "https://api.github.com/repos/org/repo/releases"

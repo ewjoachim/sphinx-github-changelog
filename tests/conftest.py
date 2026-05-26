@@ -19,23 +19,24 @@ def rootdir():
 def release_dict():
     return {
         "name": "A new hope",
-        "description": "yay",
-        "url": "https://example.com",
-        "tagName": "1.0.0",
-        "publishedAt": "2000-01-01",
-        "isDraft": False,
-        "isPrerelease": False,
+        "body": "yay",
+        "html_url": "https://example.com",
+        "tag_name": "1.0.0",
+        "published_at": "2000-01-01",
+        "created_at": "2000-01-01",
+        "draft": False,
+        "prerelease": False,
     }
 
 
 @pytest.fixture
 def release(release_dict):
-    return github_releases.Release.from_graphql(release_dict)
+    return github_releases.Release.from_rest(release_dict)
 
 
 @pytest.fixture
 def github_payload(release_dict):
-    return {"data": {"repository": {"releases": {"nodes": [release_dict]}}}}
+    return [release_dict]
 
 
 @pytest.fixture(autouse=True)

@@ -13,27 +13,36 @@ def github_params():
 
 def test_extract_releases(github_payload, release, github_params, httpx_mock):
     httpx_mock.add_response(
-        url="https://api.github.com/graphql",
-        method="POST",
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
         json=github_payload,
+    )
+    httpx_mock.add_response(
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=2",
+        method="GET",
+        json=[],
     )
     assert github_releases.extract_releases(
         github_params=github_params, token="token"
     ) == [release]
 
 
-def test_extract_releases_custom_graphql_url(
+def test_extract_releases_unauthenticated(
     github_payload, release, github_params, httpx_mock
 ):
     httpx_mock.add_response(
-        url="https://git.privaterepo.com/graphql",
-        method="POST",
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
         json=github_payload,
+    )
+    httpx_mock.add_response(
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=2",
+        method="GET",
+        json=[],
     )
     assert github_releases.extract_releases(
         github_params=github_params,
-        token="token",
-        graphql_url="https://git.privaterepo.com/graphql",
+        token=None,
     ) == [release]
 
 
@@ -41,15 +50,14 @@ def test_extract_releases_remove_none(github_params, httpx_mock, release_dict):
     release_dict_2 = release_dict.copy()
     release_dict_2["name"] = "Second"
     httpx_mock.add_response(
-        url="https://api.github.com/graphql",
-        method="POST",
-        json={
-            "data": {
-                "repository": {
-                    "releases": {"nodes": [None, release_dict, None, release_dict_2]}
-                }
-            }
-        },
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
+        json=[release_dict, release_dict_2],
+    )
+    httpx_mock.add_response(
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=2",
+        method="GET",
+        json=[],
     )
     result = github_releases.extract_releases(
         github_params=github_params, token="token"
@@ -59,8 +67,8 @@ def test_extract_releases_remove_none(github_params, httpx_mock, release_dict):
 
 def test_extract_releases_format(github_params, httpx_mock):
     httpx_mock.add_response(
-        url="https://api.github.com/graphql",
-        method="POST",
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
         json={"data": {"repository": None}},
     )
     with pytest.raises(exceptions.GitHubAPIError) as exc_info:
@@ -71,35 +79,34 @@ def test_extract_releases_format(github_params, httpx_mock):
 
 
 def test_github_call(httpx_mock):
-    url = "https://api.github.com/graphql"
+    url = "https://api.github.com/repos/a/b/releases"
     payload = {"message": "foo"}
-    httpx_mock.add_response(url=url, method="POST", json=payload)
-    assert (
-        github_releases.github_call(url=url, token="token", payload={"query": ""})
-        == payload
-    )
-
-
-def test_github_call_errors(httpx_mock):
-    url = "https://api.github.com/graphql"
     httpx_mock.add_response(
-        url=url,
-        method="POST",
-        json={"errors": [{"message": "c"}, {"message": "d"}]},
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
+        json=[payload],
     )
-    with pytest.raises(exceptions.GitHubAPIError) as exc_info:
-        github_releases.github_call(url=url, token="token", payload={"query": ""})
-
-    assert str(exc_info.value) == "GitHub API error response: \nc\nd"
+    assert github_releases.github_call(
+        url=url,
+        token="token",
+        params={"per_page": 100, "page": 1},
+    ) == [payload]
 
 
 def test_github_call_http_error(httpx_mock):
-    url = "https://api.github.com/graphql"
+    url = "https://api.github.com/repos/a/b/releases"
     httpx_mock.add_response(
-        url=url, method="POST", status_code=400, json={"message": "foo"}
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
+        status_code=400,
+        json={"message": "foo"},
     )
     with pytest.raises(exceptions.GitHubAPIError) as exc_info:
-        github_releases.github_call(url=url, token="token", payload={"query": ""})
+        github_releases.github_call(
+            url=url,
+            token="token",
+            params={"per_page": 100, "page": 1},
+        )
 
     assert str(exc_info.value) == (
         "Unexpected GitHub API error status code: 400\n" """{"message":"foo"}"""
@@ -107,9 +114,17 @@ def test_github_call_http_error(httpx_mock):
 
 
 def test_github_call_http_error_connection(httpx_mock):
-    url = "https://api.github.com/graphql"
-    httpx_mock.add_exception(httpx.ConnectError("bar"), url=url, method="POST")
+    url = "https://api.github.com/repos/a/b/releases"
+    httpx_mock.add_exception(
+        httpx.ConnectError("bar"),
+        url="https://api.github.com/repos/a/b/releases?per_page=100&page=1",
+        method="GET",
+    )
     with pytest.raises(exceptions.GitHubAPIError) as exc_info:
-        github_releases.github_call(url=url, token="token", payload={"query": ""})
+        github_releases.github_call(
+            url=url,
+            token="token",
+            params={"per_page": 100, "page": 1},
+        )
 
     assert str(exc_info.value) == "Could not retrieve changelog from github: bar"

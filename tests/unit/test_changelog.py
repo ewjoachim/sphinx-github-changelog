@@ -108,8 +108,9 @@ def test_no_token_no_url():
         <list>
             <warning>
                 <paragraph>
-                    Changelog was not built because no GitHub authentication token
-                    was found. An access token can be provided using the
+                    Changelog was not built because unauthenticated GitHub API
+                    access failed and no GitHub authentication token was found.
+                    An access token can be provided using the
                     <literal>SPHINX_GITHUB_CHANGELOG_TOKEN</literal>
                     environment variable or the
                     <literal>sphinx_github_changelog_token</literal>
@@ -132,8 +133,9 @@ def test_no_token_url():
         <list>
             <warning>
                 <paragraph>
-                    Changelog was not built because no GitHub authentication token
-                    was found. An access token can be provided using the
+                    Changelog was not built because unauthenticated GitHub API
+                    access failed and no GitHub authentication token was found.
+                    An access token can be provided using the
                     <literal>SPHINX_GITHUB_CHANGELOG_TOKEN</literal>
                     environment variable or the
                     <literal>sphinx_github_changelog_token</literal>
