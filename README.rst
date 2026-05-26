@@ -204,7 +204,7 @@ All options can also be set via environment variables of the same name in upperc
        to exclude them (env var accepts ``0``, ``false``, ``no``).
    * - ``sphinx_github_changelog_retries``
      - ``3``
-     - Number of retries after HTTP 429 responses from GitHub API.
+     - Number of retries after HTTP 429 responses from GitHub API. Will wait exponentially longer between each retry, starting at 5 second.
 
 .. _ReadTheDocs: https://readthedocs.org/
 

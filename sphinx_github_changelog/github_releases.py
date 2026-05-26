@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import dataclasses
 import datetime
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 import httpx
-from tenacity import Retrying, retry_if_exception_type, stop_after_attempt
+from tenacity import (
+    Retrying,
+    nap,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from . import exceptions, urls
 
@@ -79,6 +85,7 @@ def github_call(
     token: str | None,
     params: dict[str, int],
     retries: int,
+    sleep: Callable[[float], None] = nap.sleep,
 ) -> list[dict]:
     headers = {
         "Accept": "application/vnd.github+json",
@@ -92,6 +99,8 @@ def github_call(
         for attempt in Retrying(
             stop=stop_after_attempt(total_attempts),
             retry=retry_if_exception_type(GitHubRateLimitError),
+            wait=wait_exponential(multiplier=5, min=5),
+            sleep=sleep,
             reraise=True,
         ):
             with attempt:
