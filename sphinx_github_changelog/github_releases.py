@@ -5,8 +5,13 @@ import datetime
 from collections.abc import Sequence
 
 import httpx
+from tenacity import Retrying, retry_if_exception_type, stop_after_attempt
 
 from . import exceptions, urls
+
+
+class GitHubRateLimitError(Exception):
+    """Raised internally to trigger retry logic on HTTP 429."""
 
 
 @dataclasses.dataclass
@@ -40,6 +45,7 @@ class Release:
 def extract_releases(
     github_params: urls.GitHubParams,
     token: str | None,
+    retries: int,
 ) -> Sequence[Release]:
     page = 1
     releases: list[Release] = []
@@ -48,6 +54,7 @@ def extract_releases(
             url=github_params.releases_api_url,
             token=token,
             params={"per_page": 100, "page": page},
+            retries=retries,
         )
         if not result:
             break
@@ -67,29 +74,58 @@ def extract_releases(
     )
 
 
-def github_call(url: str, token: str | None, params: dict[str, int]) -> list[dict]:
+def github_call(
+    url: str,
+    token: str | None,
+    params: dict[str, int],
+    retries: int,
+) -> list[dict]:
     headers = {
         "Accept": "application/vnd.github+json",
     }
     if token:
         headers["Authorization"] = f"token {token}"
 
+    response: httpx.Response | None = None
+    total_attempts = max(1, retries + 1)
     try:
-        response = httpx.get(
-            url,
-            params=params,
-            headers=headers,
-        ).raise_for_status()
+        for attempt in Retrying(
+            stop=stop_after_attempt(total_attempts),
+            retry=retry_if_exception_type(GitHubRateLimitError),
+            reraise=True,
+        ):
+            with attempt:
+                try:
+                    response = httpx.get(
+                        url,
+                        params=params,
+                        headers=headers,
+                    ).raise_for_status()
+                except httpx.HTTPStatusError as exc:
+                    if exc.response.status_code == 429:
+                        raise GitHubRateLimitError(exc.response.text) from exc
+                    raise
 
     except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 401:
+            raise exceptions.GitHubAPIError(
+                "GitHub API authentication failed (401 Unauthorized)."
+            ) from exc
         raise exceptions.GitHubAPIError(
             f"Unexpected GitHub API error status code: {exc.response.status_code}\n"
             f"{exc.response.text}"
+        ) from exc
+    except GitHubRateLimitError as exc:
+        raise exceptions.GitHubAPIError(
+            f"GitHub API rate limited (429) after {retries} retries."
         ) from exc
     except httpx.HTTPError as exc:
         raise exceptions.GitHubAPIError(
             "Could not retrieve changelog from github: " + str(exc)
         ) from exc
+
+    if response is None:
+        raise NotImplementedError("Unreachable: retry loop completed without response")
 
     response_payload = response.json()
     if not isinstance(response_payload, list):

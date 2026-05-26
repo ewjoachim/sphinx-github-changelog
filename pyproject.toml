@@ -29,7 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["docutils", "myst-parser>=5.1.0", "httpx", "Sphinx"]
+dependencies = ["docutils", "myst-parser>=5.1.0", "httpx", "Sphinx", "tenacity"]
 
 [project.urls]
 Homepage = "https://sphinx-github-changelog.readthedocs.io/en/latest/"

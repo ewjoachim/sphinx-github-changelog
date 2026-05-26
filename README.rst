@@ -202,6 +202,9 @@ All options can also be set via environment variables of the same name in upperc
      - ``True``
      - Whether to include pre-releases in the changelog. Set to ``False``
        to exclude them (env var accepts ``0``, ``false``, ``no``).
+   * - ``sphinx_github_changelog_retries``
+     - ``3``
+     - Number of retries after HTTP 429 responses from GitHub API.
 
 .. _ReadTheDocs: https://readthedocs.org/
 

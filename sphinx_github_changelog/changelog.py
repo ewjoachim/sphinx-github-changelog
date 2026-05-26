@@ -62,6 +62,7 @@ def compute_changelog(
         releases = github_releases.extract_releases(
             github_params=github_params,
             token=token,
+            retries=config.retries,
         )
     except exceptions.GitHubAPIError:
         if token is None:
