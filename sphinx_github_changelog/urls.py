@@ -1,7 +1,7 @@
 """
 Utilities for working with git remotes and GitHub URLs.
 
-Includes functions to parse remote URLs and derive GraphQL endpoints.
+Includes functions to parse remote URLs and derive API endpoints.
 """
 
 from __future__ import annotations
@@ -78,10 +78,14 @@ class GitHubParams:
         return f"https://{self.hostname}/{self.owner}/{self.repo}"
 
     @property
-    def graphql_url(self) -> str:
+    def rest_api_url(self) -> str:
         if self.is_github_com:
-            return "https://api.github.com/graphql"
-        return f"https://{self.hostname}/api/graphql"
+            return "https://api.github.com"
+        return f"https://{self.hostname}/api/v3"
+
+    @property
+    def releases_api_url(self) -> str:
+        return f"{self.rest_api_url}/repos/{self.owner}/{self.repo}/releases"
 
 
 def extract_github_params(
