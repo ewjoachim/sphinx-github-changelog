@@ -127,7 +127,7 @@ git remotes in this order:
 1. ``upstream`` remote
 2. ``origin`` remote
 
-The GraphQL API and GitHub root URL are derived from this URL.
+The GitHub API base URL and GitHub root URL are derived from this URL.
 
 If for any reason, you'd rather provide the repository explicitly (e.g. the doc
 repo doesn't match the repo you're releasing from, or anything else), you can
@@ -138,8 +138,13 @@ details.
 Authentication
 --------------
 
-The extension uses the GitHub GraphQL API to retrieve the changelog. This
-requires authentication using a GitHub API token.
+The extension uses the GitHub Releases REST API to retrieve the changelog.
+
+For public repositories, this can usually work without authentication, though it's not
+recommended as GitHub applies IP-based rate limits, so this may make your builds flaky.
+Note that there will be automatic retries after HTTP 429 responses, controlled by the
+``sphinx_github_changelog_retries`` option (see below). For private repositories (or
+when unauthenticated requests are rate limited), you need a GitHub API token.
 
 Tokens can be read from (in this order):
 
@@ -162,13 +167,12 @@ variable:
       env:
         SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ github.token }}
 
-If you're not in one of the cases above (e.g. for ReadTheDocs, at least for the `time
-being`__), you'll need a personal access token. If the repository is public, the token
-doesn't need any special access (you can uncheck everything). For private and internal
-repositories, the token must have ``repo`` scope (classic tokens) or ``contents: read``
-access (fine-grained tokens).
-
-.. __: https://github.com/readthedocs/readthedocs.org/issues/13053
+If you're not in one of the cases above and your build environment cannot use
+anonymous API access reliably (e.g. rate limits), you'll need a personal access
+token. If the repository is public, the token doesn't need any special access
+(you can uncheck everything). For private and internal repositories, the token
+must have ``repo`` scope (classic tokens) or ``contents: read`` access
+(fine-grained tokens).
 
 Pass the token as the ``SPHINX_GITHUB_CHANGELOG_TOKEN`` (or ``GITHUB_TOKEN``)
 environment variable. You can also set the token as ``sphinx_github_changelog_token`` in
@@ -194,9 +198,6 @@ All options can also be set via environment variables of the same name in upperc
    * - ``sphinx_github_changelog_root_repo``
      - ``None``
      - Root URL to the repository. Usually detected automatically.
-   * - ``sphinx_github_changelog_graphql_url``
-     - ``None``
-     - URL to GraphQL API. Usually detected automatically.
    * - ``sphinx_github_changelog_include_prereleases``
      - ``True``
      - Whether to include pre-releases in the changelog. Set to ``False``
