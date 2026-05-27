@@ -50,6 +50,23 @@ a terminal report at the bottom as well as a more detailed HTML report in
 ``htmlcov/index.html``. In PRs, a summary of the coverage report is posted as a comment
 by the CI.
 
+Acceptance tests and fixtures
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Acceptance tests in ``tests/acceptance/`` are snapshot-like tests of
+the built HTML.
+
+If the normalized HTML output changes, ``tests/acceptance/changelog.html`` is
+rewritten by the test before it fails. Review the updated fixture, then run the
+test again and commit the fixture change if it is expected.
+
+Those tests also use VCR cassettes from ``tests/acceptance/cassettes``.
+If the GitHub API fixture data needs to be refreshed, use:
+
+.. code-block:: console
+
+    # Re-record interactions in the selected test run
+    $ uv run pytest --record-mode=rewrite
 
 I want to build the documentation
 ---------------------------------
