@@ -3,107 +3,53 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from bs4 import BeautifulSoup
+
+from sphinx_github_changelog import credentials, exceptions
 
 
-@pytest.fixture
-def full_gfm_release_dict():
-    # See https://github.com/executablebooks/MyST-Parser/issues/1136 for missing elements
-    return {
-        "name": "A new hope",
-        "body": r"""
-# Heading
-
-*emphasis* / **strong** / ~~strikethrough~~ / <sub>sub</sub>
-
-Emojis:
-- 👍 (UTF-8)
-
-[Contribution guidelines for this project](/docs/index.rst)
-
-1. List
-2. Next item
-
-- Unordered
-- First
-
-- [x] #1
-- [ ] https://github.com/octo-org/octo-repo/issues/740
-- [ ] Add delight to the experience when all tasks are complete :tada:
-
-> [!NOTE]
-> Highlights information that users should take into account, even when skimming.
-
-> [!TIP]
-> Optional information to help a user be more successful.
-
-> [!IMPORTANT]
-> Crucial information necessary for users to succeed.
-
-> [!WARNING]
-> Critical content demanding immediate user attention due to potential risks.
-
-> [!CAUTION]
-> Negative potential consequences of an action.
-
-| foo | bar |
-| --- | --- |
-| baz | bim |
-
-> # Foo
-> bar
-> baz
+def normalize_html_fragment(fragment: str) -> str:
+    soup = BeautifulSoup(fragment, "html5lib")
+    release = soup.select_one("section#release-1-0-0")
+    assert release is not None
+    return release.prettify(formatter="minimal")
 
 
-```python
-def x():
-    pass
-```
+@pytest.fixture(autouse=True)
+def no_local_token_discovery(monkeypatch):
+    def _no_token(*, host: str) -> str:
+        raise exceptions.CouldNotExtract("No GitHub token found")
 
-<details>
-<summary>Details</summary>
-
-Details
-
-</details>
-
-<!-- This content will not appear in the rendered Markdown -->
-
-Let's rename \*our-new-project\* to \*our-old-project\*.
-
-![Badge](https://img.shields.io/pypi/v/sphinx-github-changelog?logo=pypi&logoColor=white)
+    monkeypatch.setattr(credentials, "get_github_token", _no_token)
 
 
-""",
-        "html_url": "https://example.com",
-        "tag_name": "1.0.0",
-        "published_at": "2000-01-01",
-        "created_at": "2000-01-01",
-        "draft": False,
-        "prerelease": False,
-    }
-
-
+@pytest.mark.vcr
 @pytest.mark.sphinx(buildername="html", testroot="all")
-def test_build(app, httpx_mock, full_gfm_release_dict):
-    httpx_mock.add_response(
-        url="https://api.github.com/repos/aaa/bbb/releases?per_page=100&page=1",
-        method="GET",
-        json=[full_gfm_release_dict],
-    )
-    httpx_mock.add_response(
-        url="https://api.github.com/repos/aaa/bbb/releases?per_page=100&page=2",
-        method="GET",
-        json=[],
-    )
+def test_build(app):
     app.builder.build_all()
-    expected = (Path(__file__).parent / "changelog.html").read_text()
-
     received = (app.outdir / "index.html").read_text()
-    print(received)
-    request = httpx_mock.get_requests()[0]
-    assert request.url.params["per_page"] == "100"
-    assert request.url.params["page"] == "1"
-    assert expected in received
+    expected_path = Path(__file__).parent / "changelog.html"
+    expected = expected_path.read_text()
+
+    normalized_received = normalize_html_fragment(received)
+    normalized_expected = normalize_html_fragment(expected)
+
+    if normalized_received != normalized_expected:
+        expected_path.write_text(normalized_received + "\n")
+
+    assert normalized_received == normalized_expected
+
+
+@pytest.mark.vcr
+@pytest.mark.sphinx(buildername="html", testroot="404")
+def test_build_404(app):
+    app.builder.build_all()
+    received = (app.outdir / "index.html").read_text()
+    assert (
+        "Changelog was not built because unauthenticated GitHub API access failed"
+        in (received)
+    )
+    assert "Find the project changelog" in received
 
 
 @pytest.mark.sphinx(buildername="html", testroot="error")

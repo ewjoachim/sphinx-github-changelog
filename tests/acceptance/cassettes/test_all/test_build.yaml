@@ -1,0 +1,176 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/vnd.github+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - api.github.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases?per_page=100&page=1
+  response:
+    body:
+      string: "[{\"url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033\",\"assets_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033/assets\",\"upload_url\":\"https://uploads.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033/assets{?name,label}\",\"html_url\":\"https://github.com/ewjoachim/sphinx-github-changelog/releases/tag/1.0.0\",\"id\":29007033,\"author\":{\"login\":\"github-actions[bot]\",\"id\":41898282,\"node_id\":\"MDM6Qm90NDE4OTgyODI=\",\"avatar_url\":\"https://avatars.githubusercontent.com/in/15368?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/github-actions%5Bbot%5D\",\"html_url\":\"https://github.com/apps/github-actions\",\"followers_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/followers\",\"following_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions\",\"organizations_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/orgs\",\"repos_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/repos\",\"events_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/received_events\",\"type\":\"Bot\",\"user_view_type\":\"public\",\"site_admin\":false},\"node_id\":\"MDc6UmVsZWFzZTI5MDA3MDMz\",\"tag_name\":\"1.0.0\",\"target_commitish\":\"main\",\"name\":\"1.0.0:
+        A fresh start\",\"draft\":false,\"immutable\":false,\"prerelease\":false,\"created_at\":\"2020-07-27T22:39:37Z\",\"updated_at\":\"2026-05-15T16:09:09Z\",\"published_at\":\"2020-07-27T22:42:09Z\",\"assets\":[],\"tarball_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/tarball/1.0.0\",\"zipball_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/zipball/1.0.0\",\"body\":\"###
+        Features\\r\\n\\r\\n- Initial code (#2)\\r\\n\\r\\n### Bug Fixes\\r\\n\\r\\n-
+        Main branch is actually called main (#3)\\r\\n\\r\\n---\\r\\n### Test\\r\\n\\r\\nThe
+        following text is just to test the changelog markup\\r\\n\\r\\n# Heading\\r\\n\\r\\n*emphasis*
+        / **strong** / ~~strikethrough~~ / <sub>sub</sub> / <ins>underlined</ins>\\r\\n`#336699`
+        / @ewjoachim / https://github.com/ewjoachim/sphinx-github-changelog/labels/dependencies\\r\\n\\r\\nEmojis:\\r\\n-
+        \U0001F44D (UTF-8)\\r\\n- :thumbsup: (short code)\\r\\n- :shipit: :octocat:
+        \ (GH specific) \\r\\n\\r\\n\\r\\n[Contribution guidelines for this project](/docs/index.rst)\\r\\n\\r\\n1.
+        List\\r\\n2. Next item\\r\\n\\r\\n- Unordered\\r\\n- First\\r\\n\\r\\n- [x]
+        #1\\r\\n- [ ] https://github.com/octo-org/octo-repo/issues/740\\r\\n- [ ]
+        Add delight to the experience when all tasks are complete :tada:\\r\\n\\r\\n\\r\\n-
+        sub 1\\r\\n> [!NOTE]  \\r\\n> Highlights information that users should take
+        into account, even when skimming.\\r\\n\\r\\n> [!TIP]\\r\\n> Optional information
+        to help a user be more successful.\\r\\n\\r\\n> [!IMPORTANT]  \\r\\n> Crucial
+        information necessary for users to succeed.\\r\\n\\r\\n> [!WARNING]  \\r\\n>
+        Critical content demanding immediate user attention due to potential risks.\\r\\n\\r\\n>
+        [!CAUTION]\\r\\n> Negative potential consequences of an action.\\r\\n\\r\\n|
+        foo | bar |\\r\\n| --- | --- |\\r\\n| baz | bim |\\r\\n\\r\\n> # Foo\\r\\n>
+        bar\\r\\n> baz\\r\\n\\r\\n\\r\\n```python\\r\\ndef x():\\r\\n    pass\\r\\n```\\r\\n\\r\\n<details>\\r\\n<summary>Details</summary>\\r\\n\\r\\nDetails\\r\\n\\r\\n</details>\\r\\n\\r\\n\\r\\n<!--
+        This content will not appear in the rendered Markdown -->\\r\\n\\r\\nLet's
+        rename \\\\*our-new-project\\\\* to \\\\*our-old-project\\\\*.\\r\\n\\r\\n![Screenshot
+        of a comment on a GitHub issue showing an image, added in the Markdown, of
+        an Octocat smiling and raising a tentacle.](https://myoctocat.com/assets/images/base-octocat.svg)\\r\\n\\r\\n\\r\\n\\r\\n\",\"mentions_count\":1}]"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset, Warning
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 26 May 2026 23:42:19 GMT
+      ETag:
+      - W/"5c175e617b279064d0996fee9bd05fabd656a9b3bd824c6d40fa1e4a0faf12f6"
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - github.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept,Accept-Encoding, Accept, X-Requested-With
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E7E1:332C9:1BD16B3:1A21649:6A162FDB
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '59'
+      X-RateLimit-Reset:
+      - '1779842539'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '1'
+      X-XSS-Protection:
+      - '0'
+      content-length:
+      - '3836'
+      x-github-api-version-selected:
+      - '2022-11-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/vnd.github+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - api.github.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases?per_page=100&page=2
+  response:
+    body:
+      string: '[]'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset, Warning
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Content-Length:
+      - '2'
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 26 May 2026 23:42:20 GMT
+      ETag:
+      - '"74d1db57f0fec3481bb6b4d9bcdc020d656635ec6c53ee589d27a8831cbbe280"'
+      Link:
+      - <https://api.github.com/repositories/274927215/releases?per_page=100&page=1>;
+        rel="prev", <https://api.github.com/repositories/274927215/releases?per_page=100&page=1>;
+        rel="last", <https://api.github.com/repositories/274927215/releases?per_page=100&page=1>;
+        rel="first"
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - github.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept,Accept-Encoding, Accept, X-Requested-With
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E7E2:63477:1B2C953:197EE75:6A162FDB
+      X-RateLimit-Limit:
+      - '60'
+      X-RateLimit-Remaining:
+      - '58'
+      X-RateLimit-Reset:
+      - '1779842539'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '2'
+      X-XSS-Protection:
+      - '0'
+      x-github-api-version-selected:
+      - '2022-11-28'
+    status:
+      code: 200
+      message: OK
+version: 1
