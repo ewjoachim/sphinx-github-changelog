@@ -16,132 +16,30 @@ interactions:
     uri: https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases?per_page=100&page=1
   response:
     body:
-      string: !!binary |
-        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
+      string: "[{\"url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033\",\"assets_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033/assets\",\"upload_url\":\"https://uploads.github.com/repos/ewjoachim/sphinx-github-changelog/releases/29007033/assets{?name,label}\",\"html_url\":\"https://github.com/ewjoachim/sphinx-github-changelog/releases/tag/1.0.0\",\"id\":29007033,\"author\":{\"login\":\"github-actions[bot]\",\"id\":41898282,\"node_id\":\"MDM6Qm90NDE4OTgyODI=\",\"avatar_url\":\"https://avatars.githubusercontent.com/in/15368?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/github-actions%5Bbot%5D\",\"html_url\":\"https://github.com/apps/github-actions\",\"followers_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/followers\",\"following_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions\",\"organizations_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/orgs\",\"repos_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/repos\",\"events_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/github-actions%5Bbot%5D/received_events\",\"type\":\"Bot\",\"user_view_type\":\"public\",\"site_admin\":false},\"node_id\":\"MDc6UmVsZWFzZTI5MDA3MDMz\",\"tag_name\":\"1.0.0\",\"target_commitish\":\"main\",\"name\":\"1.0.0:
+        A fresh start\",\"draft\":false,\"immutable\":false,\"prerelease\":false,\"created_at\":\"2020-07-27T22:39:37Z\",\"updated_at\":\"2026-05-15T16:09:09Z\",\"published_at\":\"2020-07-27T22:42:09Z\",\"assets\":[],\"tarball_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/tarball/1.0.0\",\"zipball_url\":\"https://api.github.com/repos/ewjoachim/sphinx-github-changelog/zipball/1.0.0\",\"body\":\"###
+        Features\\r\\n\\r\\n- Initial code (#2)\\r\\n\\r\\n### Bug Fixes\\r\\n\\r\\n-
+        Main branch is actually called main (#3)\\r\\n\\r\\n---\\r\\n### Test\\r\\n\\r\\nThe
+        following text is just to test the changelog markup\\r\\n\\r\\n# Heading\\r\\n\\r\\n*emphasis*
+        / **strong** / ~~strikethrough~~ / <sub>sub</sub> / <ins>underlined</ins>\\r\\n`#336699`
+        / @ewjoachim / https://github.com/ewjoachim/sphinx-github-changelog/labels/dependencies\\r\\n\\r\\nEmojis:\\r\\n-
+        \U0001F44D (UTF-8)\\r\\n- :thumbsup: (short code)\\r\\n- :shipit: :octocat:
+        \ (GH specific) \\r\\n\\r\\n\\r\\n[Contribution guidelines for this project](/docs/index.rst)\\r\\n\\r\\n1.
+        List\\r\\n2. Next item\\r\\n\\r\\n- Unordered\\r\\n- First\\r\\n\\r\\n- [x]
+        #1\\r\\n- [ ] https://github.com/octo-org/octo-repo/issues/740\\r\\n- [ ]
+        Add delight to the experience when all tasks are complete :tada:\\r\\n\\r\\n\\r\\n-
+        sub 1\\r\\n> [!NOTE]  \\r\\n> Highlights information that users should take
+        into account, even when skimming.\\r\\n\\r\\n> [!TIP]\\r\\n> Optional information
+        to help a user be more successful.\\r\\n\\r\\n> [!IMPORTANT]  \\r\\n> Crucial
+        information necessary for users to succeed.\\r\\n\\r\\n> [!WARNING]  \\r\\n>
+        Critical content demanding immediate user attention due to potential risks.\\r\\n\\r\\n>
+        [!CAUTION]\\r\\n> Negative potential consequences of an action.\\r\\n\\r\\n|
+        foo | bar |\\r\\n| --- | --- |\\r\\n| baz | bim |\\r\\n\\r\\n> # Foo\\r\\n>
+        bar\\r\\n> baz\\r\\n\\r\\n\\r\\n```python\\r\\ndef x():\\r\\n    pass\\r\\n```\\r\\n\\r\\n<details>\\r\\n<summary>Details</summary>\\r\\n\\r\\nDetails\\r\\n\\r\\n</details>\\r\\n\\r\\n\\r\\n<!--
+        This content will not appear in the rendered Markdown -->\\r\\n\\r\\nLet's
+        rename \\\\*our-new-project\\\\* to \\\\*our-old-project\\\\*.\\r\\n\\r\\n![Screenshot
+        of a comment on a GitHub issue showing an image, added in the Markdown, of
+        an Octocat smiling and raising a tentacle.](https://myoctocat.com/assets/images/base-octocat.svg)\\r\\n\\r\\n\\r\\n\\r\\n\",\"mentions_count\":1}]"
     headers:
       Accept-Ranges:
       - bytes
@@ -154,14 +52,12 @@ interactions:
         X-GitHub-Request-Id, Deprecation, Sunset, Warning
       Cache-Control:
       - public, max-age=60, s-maxage=60
-      Content-Encoding:
-      - gzip
       Content-Security-Policy:
       - default-src 'none'
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Tue, 26 May 2026 23:27:36 GMT
+      - Tue, 26 May 2026 23:42:19 GMT
       ETag:
       - W/"5c175e617b279064d0996fee9bd05fabd656a9b3bd824c6d40fa1e4a0faf12f6"
       Referrer-Policy:
@@ -170,8 +66,6 @@ interactions:
       - github.com
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains; preload
-      Transfer-Encoding:
-      - chunked
       Vary:
       - Accept,Accept-Encoding, Accept, X-Requested-With
       X-Content-Type-Options:
@@ -181,19 +75,21 @@ interactions:
       X-GitHub-Media-Type:
       - github.v3; format=json
       X-GitHub-Request-Id:
-      - E743:3FB14:198ACE9:17DE373:6A162C67
+      - E7E1:332C9:1BD16B3:1A21649:6A162FDB
       X-RateLimit-Limit:
       - '60'
       X-RateLimit-Remaining:
-      - '49'
+      - '59'
       X-RateLimit-Reset:
-      - '1779838837'
+      - '1779842539'
       X-RateLimit-Resource:
       - core
       X-RateLimit-Used:
-      - '11'
+      - '1'
       X-XSS-Protection:
       - '0'
+      content-length:
+      - '3836'
       x-github-api-version-selected:
       - '2022-11-28'
     status:
@@ -236,7 +132,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Tue, 26 May 2026 23:27:36 GMT
+      - Tue, 26 May 2026 23:42:20 GMT
       ETag:
       - '"74d1db57f0fec3481bb6b4d9bcdc020d656635ec6c53ee589d27a8831cbbe280"'
       Link:
@@ -259,17 +155,17 @@ interactions:
       X-GitHub-Media-Type:
       - github.v3; format=json
       X-GitHub-Request-Id:
-      - E744:14CA04:19C91E5:1822F07:6A162C68
+      - E7E2:63477:1B2C953:197EE75:6A162FDB
       X-RateLimit-Limit:
       - '60'
       X-RateLimit-Remaining:
-      - '48'
+      - '58'
       X-RateLimit-Reset:
-      - '1779838837'
+      - '1779842539'
       X-RateLimit-Resource:
       - core
       X-RateLimit-Used:
-      - '12'
+      - '2'
       X-XSS-Protection:
       - '0'
       x-github-api-version-selected:
