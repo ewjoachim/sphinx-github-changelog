@@ -1,8 +1,18 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+from bs4 import BeautifulSoup
 
 from sphinx_github_changelog import credentials, exceptions
+
+
+def normalize_html_fragment(fragment: str) -> str:
+    soup = BeautifulSoup(fragment, "html5lib")
+    release = soup.select_one("section#release-1-0-0")
+    assert release is not None
+    return release.prettify(formatter="minimal")
 
 
 @pytest.fixture(autouse=True)
@@ -18,10 +28,16 @@ def no_local_token_discovery(monkeypatch):
 def test_build(app):
     app.builder.build_all()
     received = (app.outdir / "index.html").read_text()
-    assert "Released on" in received
-    assert "https://github.com/ewjoachim/sphinx-github-changelog/releases/tag/" in (
-        received
-    )
+    expected_path = Path(__file__).parent / "changelog.html"
+    expected = expected_path.read_text()
+
+    normalized_received = normalize_html_fragment(received)
+    normalized_expected = normalize_html_fragment(expected)
+
+    if normalized_received != normalized_expected:
+        expected_path.write_text(normalized_received + "\n")
+
+    assert normalized_received == normalized_expected
 
 
 @pytest.mark.vcr
