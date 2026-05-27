@@ -29,7 +29,10 @@ I want a venv to play locally
 
     $ uv sync
 
-Use at ``uv sync --python=3.x`` if you want to work on a specific Python version.
+Use ``uv sync --python=3.x`` if you want to work on a specific Python version.
+
+There is no need to activate ``.venv`` manually. Run project commands through
+``uv run`` instead.
 
 I want to run the tests
 ---------------------------
@@ -56,7 +59,7 @@ Build with:
 .. code-block:: console
 
     $ scripts/docs
-    $ python -m webbrowser docs/_build/html/index.html
+    $ uv run python -m webbrowser docs/_build/html/index.html
 
 If Sphinx's console output is localized, and you would rather have it in English,
 use the environment variable ``export LC_ALL=C.utf-8``.
