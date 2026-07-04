@@ -26,7 +26,7 @@ repos:
       - id: no-commit-to-branch
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.18
+    rev: v0.15.20
     hooks:
       - id: ruff
         args: [--fix, --unsafe-fixes, --show-fixes]
@@ -39,14 +39,14 @@ repos:
   #     - id: doc8
 
   - repo: https://github.com/DetachHead/basedpyright-prek-mirror
-    rev: 1.39.8
+    rev: 1.39.9
     hooks:
       - id: basedpyright
         args: [--verbose]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.11.23
+    rev: 0.11.25
     hooks:
       - id: uv-lock
 
