@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up UV
         id: setup-uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        uses: astral-sh/setup-uv@d31148d669074a8d0a63714ba94f3201e7020bc3 # v8.3.0
         with:
           enable-cache: false
 
@@ -23,7 +23,7 @@ jobs:
         run: uv sync --all-groups
 
       - name: Run prek
-        uses: j178/prek-action@bdca6f102f98e2b4c7029491a53dfd366469e33d # v2.0.4
+        uses: j178/prek-action@e98a699c41eb69ab013a45817a0406469a748f8d # v2.0.5
 
       - name: Commits back to branch if necessary
         uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
