@@ -26,7 +26,7 @@ repos:
       - id: no-commit-to-branch
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.22
+    rev: v0.16.1
     hooks:
       - id: ruff
         args: [--fix, --unsafe-fixes, --show-fixes]
@@ -46,13 +46,13 @@ repos:
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.11.29
+    rev: 0.12.1
     hooks:
       - id: uv-lock
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     # Zizmor version.
-    rev: v1.27.0
+    rev: v1.29.0
     hooks:
       # Run the linter.
       - id: zizmor
