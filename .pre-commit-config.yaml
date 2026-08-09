@@ -1,6 +1,5 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+  - repo: builtin
     hooks:
       # File names
       - id: check-case-conflict
@@ -11,49 +10,50 @@ repos:
       - id: check-yaml
       # Executables
       - id: check-executables-have-shebangs
-        exclude: dev-env
       - id: check-shebang-scripts-are-executable
       # Git shenanigans
       - id: check-merge-conflict
       - id: check-added-large-files
-      # Python issues
-      - id: check-ast
-      - id: debug-statements
       # Whitespace
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
       - id: no-commit-to-branch
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.22
+  - repo: local
     hooks:
-      - id: ruff
-        args: [--fix, --unsafe-fixes, --show-fixes]
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --group lint ruff check --force-exclude --fix --unsafe-fixes --show-fixes
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
       - id: ruff-format
+        name: ruff format
+        entry: uv run --group lint ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
 
-  # Remove doc8 while they force old docutils.
-  # - repo: https://github.com/PyCQA/doc8
-  #   rev: 0.11.2
-  #   hooks:
-  #     - id: doc8
-
-  - repo: https://github.com/DetachHead/basedpyright-prek-mirror
-    rev: 1.39.9
-    hooks:
-      - id: basedpyright
-        args: [--verbose]
-
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    # uv version.
-    rev: 0.11.29
-    hooks:
       - id: uv-lock
+        name: uv-lock
+        entry: uv lock
+        language: system
+        files: ^(uv\.lock|pyproject\.toml|uv\.toml)$
+        pass_filenames: false
 
-  - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    # Zizmor version.
-    rev: v1.27.0
-    hooks:
-      # Run the linter.
+      - id: basedpyright
+        name: basedpyright
+        entry: uv run --group lint basedpyright
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
       - id: zizmor
-        args: ["--fix=all"]
+        name: zizmor
+        entry: uv run --group lint zizmor --no-progress --fix=all
+        language: system
+        types: [yaml]
+        files: (\.github/(workflows/.*|dependabot\.ya?ml))|(action\.ya?ml)$
+        require_serial: true
