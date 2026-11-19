@@ -94,7 +94,6 @@ addopts = [
     "-vv",
     "--strict-markers",
     "-rfE",
-    "-m not benchmark",
     "--cov=sphinx_github_changelog",
     "--cov-report=term-missing",
     "--cov-report=html",
